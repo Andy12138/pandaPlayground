@@ -16,20 +16,22 @@ public class TestImage {
      * @throws ParseException
      */
     public static void main(String[] args) {
-        exportImg2("李.白1大8魔","D:\\tmp\\1.jpg");
+        exportImg2("广东省广州市","D:\\tmp\\1.jpg");
     }
 
     public static void exportImg2(String username,String headImg){
         try {
             //1.jpg是你的 主图片的路径
-            InputStream is = new FileInputStream("D:\\tmp\\jiangzhuang.jpg");
-
+            InputStream is = new FileInputStream("D:\\tmp\\yyy.jpg");
+//            BufferedImage big = ImageIO.read(new File("D:\\tmp\\zhengjian.jpg"));
+//            Graphics2D g = big.createGraphics();
             //通过JPEG图象流创建JPEG数据流解码器
             JPEGImageDecoder jpegDecoder = JPEGCodec.createJPEGDecoder(is);
             //解码当前JPEG数据流，返回BufferedImage对象
             BufferedImage buffImg = jpegDecoder.decodeAsBufferedImage();
             //得到画笔对象
             Graphics g = buffImg.getGraphics();
+            System.out.println("长"+ buffImg.getWidth() + "; 高" + buffImg.getHeight());
 
             //创建你要附加的图象。
             //小图片的路径
@@ -47,13 +49,13 @@ public class TestImage {
 
 
             //最后一个参数用来设置字体的大小
-            Font f = new Font("楷体",Font.BOLD,23);
-            Color mycolor = new Color(29, 66, 95);//new Color(0, 0, 255);
+            Font f = new Font("楷体",Font.BOLD,40);
+            Color mycolor = Color.BLACK;//new Color(0, 0, 255);
             g.setColor(mycolor);
             g.setFont(f);
 
             //10,20 表示这段文字在图片上的位置(x,y) .第一个是你设置的内容。
-            g.drawString(username,215,370);
+            g.drawString(username,450,750);
 
             g.dispose();
 
