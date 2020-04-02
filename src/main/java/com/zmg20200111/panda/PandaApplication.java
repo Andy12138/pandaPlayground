@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PandaApplication {
 
     public static void main(String[] args) {
-        System.out.println("我是最最棒！");
         SpringApplication.run(PandaApplication.class, args);
     }
 

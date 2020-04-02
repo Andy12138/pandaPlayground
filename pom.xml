@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.zmg20200111</groupId>
-    <artifactId>panda</artifactId>
+    <artifactId>pandaShow</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>panda</name>
+    <name>pandaShow</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
