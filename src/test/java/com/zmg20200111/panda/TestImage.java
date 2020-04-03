@@ -24,7 +24,7 @@ public class TestImage {
         try {
             //1.jpg是你的 主图片的路径
 //            InputStream is = new FileInputStream("D:\\tmp\\yyy.jpg");
-            BufferedImage big = ImageIO.read(new File("D:\\\\tmp\\\\real.jpg"));
+            BufferedImage big = ImageIO.read(new File("D:\\\\tmp\\\\certificate.jpg"));
             Graphics2D g = big.createGraphics();
             //通过JPEG图象流创建JPEG数据流解码器
 //            JPEGImageDecoder jpegDecoder = JPEGCodec.createJPEGDecoder(is);

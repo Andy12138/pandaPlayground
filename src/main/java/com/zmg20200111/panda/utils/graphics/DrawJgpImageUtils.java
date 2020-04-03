@@ -5,6 +5,7 @@ import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import com.zmg20200111.panda.utils.graphics.bean.RegistrationCertificate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -24,7 +25,7 @@ public class DrawJgpImageUtils {
 
     public void drawRegistrationCertificate(String imagePath, RegistrationCertificate drawParams) {
         try {
-            BufferedImage baseImg = ImageIO.read(new File("D:\\tmp\\real.jpg"));
+            BufferedImage baseImg = ImageIO.read(new File(imagePath));
             log.info("图片的长：{}，高：{}", baseImg.getWidth(), baseImg.getHeight());
             // 获取画笔对象
             Graphics2D g = baseImg.createGraphics();
@@ -56,9 +57,12 @@ public class DrawJgpImageUtils {
             // 画笔使用结束
             g.dispose();
             // 输出到一个目录
-            OutputStream os = new FileOutputStream("d:\\tmp\\out\\机构登记证.jpg");
+            OutputStream os = new FileOutputStream("d:\\tmp\\机构登记证.jpg");
             // 创建编码器，用于编码内存中的图像数据
             JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(os);
+            JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(baseImg);
+            param.setQuality(1f, true);
+            encoder.setJPEGEncodeParam(param);
             encoder.encode(baseImg);
             os.close();
         } catch (IOException e) {
@@ -88,7 +92,7 @@ public class DrawJgpImageUtils {
 
     public static void main(String[] args) {
         DrawJgpImageUtils utils = new DrawJgpImageUtils();
-        utils.drawRegistrationCertificate("D:\\tmp\\real.jpg", utils.rcParams);
+        utils.drawRegistrationCertificate("D:\\code\\pandaShow\\src\\main\\resources\\static\\file\\certificate.jpg", utils.rcParams);
     }
 
     private RegistrationCertificate rcParams = new RegistrationCertificate();
