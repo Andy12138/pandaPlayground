@@ -5,6 +5,7 @@ import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -22,16 +23,16 @@ public class TestImage {
     public static void exportImg2(String username,String headImg){
         try {
             //1.jpg是你的 主图片的路径
-            InputStream is = new FileInputStream("D:\\tmp\\yyy.jpg");
-//            BufferedImage big = ImageIO.read(new File("D:\\tmp\\zhengjian.jpg"));
-//            Graphics2D g = big.createGraphics();
+//            InputStream is = new FileInputStream("D:\\tmp\\yyy.jpg");
+            BufferedImage big = ImageIO.read(new File("D:\\\\tmp\\\\real.jpg"));
+            Graphics2D g = big.createGraphics();
             //通过JPEG图象流创建JPEG数据流解码器
-            JPEGImageDecoder jpegDecoder = JPEGCodec.createJPEGDecoder(is);
+//            JPEGImageDecoder jpegDecoder = JPEGCodec.createJPEGDecoder(is);
             //解码当前JPEG数据流，返回BufferedImage对象
-            BufferedImage buffImg = jpegDecoder.decodeAsBufferedImage();
+//            BufferedImage buffImg = jpegDecoder.decodeAsBufferedImage();
             //得到画笔对象
-            Graphics g = buffImg.getGraphics();
-            System.out.println("长"+ buffImg.getWidth() + "; 高" + buffImg.getHeight());
+//            Graphics g = buffImg.getGraphics();
+            System.out.println("长"+ big.getWidth() + "; 高" + big.getHeight());
 
             //创建你要附加的图象。
             //小图片的路径
@@ -49,13 +50,14 @@ public class TestImage {
 
 
             //最后一个参数用来设置字体的大小
-            Font f = new Font("楷体",Font.BOLD,40);
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+            Font f = new Font("宋体",Font.BOLD,60);
             Color mycolor = Color.BLACK;//new Color(0, 0, 255);
             g.setColor(mycolor);
             g.setFont(f);
 
             //10,20 表示这段文字在图片上的位置(x,y) .第一个是你设置的内容。
-            g.drawString(username,450,750);
+            g.drawString(username,747,1163);
 
             g.dispose();
 
@@ -67,9 +69,9 @@ public class TestImage {
             os = new FileOutputStream(shareFileName);
             //创键编码器，用于编码内存中的图象数据。
             JPEGImageEncoder en = JPEGCodec.createJPEGEncoder(os);
-            en.encode(buffImg);
+            en.encode(big);
 
-            is.close();
+//            is.close();
             os.close();
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
