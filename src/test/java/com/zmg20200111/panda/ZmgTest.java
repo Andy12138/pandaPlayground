@@ -64,4 +64,17 @@ public class ZmgTest {
         AA[] objects = a.stream().map(map -> new AA(map.getA(), map.getB())).toArray(AA[]::new);
         System.out.println(objects);
     }
+
+    @Test
+    public void test4() {
+        List<Integer> list = new ArrayList<>(Arrays.asList(1,2,3,4));
+        Iterator<Integer> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            Integer next = iterator.next();
+            if (next == 2) {
+                iterator.remove();
+            }
+        }
+        System.out.println(list.toString());
+    }
 }
