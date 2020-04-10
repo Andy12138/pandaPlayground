@@ -3,6 +3,7 @@ package com.zmg20200111.panda.utils.graphics;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import com.sun.imageio.plugins.png.PNGImageWriter;
 import com.zmg20200111.panda.utils.graphics.bean.RegistrationCertificate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -29,6 +30,11 @@ public class DrawJgpImageUtils {
             log.info("图片的长：{}，高：{}", baseImg.getWidth(), baseImg.getHeight());
             // 获取画笔对象
             Graphics2D g = baseImg.createGraphics();
+            // *****
+            baseImg = g.getDeviceConfiguration().createCompatibleImage(baseImg.getWidth(), baseImg.getHeight(), Transparency.TRANSLUCENT);
+            g.dispose();
+            g = baseImg.createGraphics();
+
             // 画笔对象写入的文字去除锯齿
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
             Color drawColor = Color.BLACK;
@@ -57,7 +63,7 @@ public class DrawJgpImageUtils {
             // 画笔使用结束
             g.dispose();
             // 输出到一个目录
-            OutputStream os = new FileOutputStream("d:\\tmp\\机构登记证.jpg");
+            OutputStream os = new FileOutputStream("d:\\tmp\\out\\机构登记证.png");
             // 创建编码器，用于编码内存中的图像数据
             JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(os);
             JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(baseImg);
@@ -92,7 +98,7 @@ public class DrawJgpImageUtils {
 
     public static void main(String[] args) {
         DrawJgpImageUtils utils = new DrawJgpImageUtils();
-        utils.drawRegistrationCertificate("D:\\code\\pandaShow\\src\\main\\resources\\static\\file\\certificate.jpg", utils.rcParams);
+        utils.drawRegistrationCertificate("D:\\tmp\\zjpng.png", utils.rcParams);
     }
 
     private RegistrationCertificate rcParams = new RegistrationCertificate();
@@ -101,7 +107,7 @@ public class DrawJgpImageUtils {
         rcParams.setOrganName("中山");
         rcParams.setOrganNameFamily("楷体");
         rcParams.setOrganNameSize(65);
-        rcParams.setOrganNameTop(1180);
+        rcParams.setOrganNameTop(180);
         rcParams.setOrganNameBoxLeft(770);
         rcParams.setOrganNameBoxReght(1540);
 
