@@ -3,10 +3,8 @@ package com.zmg20200111.panda.utils.graphics;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import com.sun.imageio.plugins.png.PNGImageWriter;
 import com.zmg20200111.panda.utils.graphics.bean.RegistrationCertificate;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -70,6 +68,8 @@ public class DrawJgpImageUtils {
             param.setQuality(1f, true);
             encoder.setJPEGEncodeParam(param);
             encoder.encode(baseImg);
+            BufferedImage bufferedImage = new BufferedImage(2560, 1600, BufferedImage.TYPE_3BYTE_BGR);
+            ImageIO.write(bufferedImage, "png", os);
             os.close();
         } catch (IOException e) {
             e.printStackTrace();
