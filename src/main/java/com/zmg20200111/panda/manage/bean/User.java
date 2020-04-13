@@ -1,4 +1,4 @@
-package com.zmg20200111.panda.bean;
+package com.zmg20200111.panda.manage.bean;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

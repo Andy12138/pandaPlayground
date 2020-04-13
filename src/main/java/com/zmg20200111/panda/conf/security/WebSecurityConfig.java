@@ -1,8 +1,10 @@
 package com.zmg20200111.panda.conf.security;
 
+import com.zmg20200111.panda.manage.security.JwtAuthenticationFilter;
 import com.zmg20200111.panda.manage.security.MyAudhenticationFailHandler;
 import com.zmg20200111.panda.manage.security.MyAudhenticationSuccessHandler;
 import com.zmg20200111.panda.manage.security.MyAuthenticationEntryPoint;
+import com.zmg20200111.panda.service.AuthUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * @author Andy
@@ -22,26 +25,33 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
-    private com.zmg20200111.panda.service.impl.DatabaseUserDetailsServiceImpl databaseUserDetailsService;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private AuthUserDetailsService authUserDetailsService;
     @Autowired
     private MyAudhenticationSuccessHandler myAuthenticationSuccessHandler;
     @Autowired
     private MyAudhenticationFailHandler myAudhenticationFailHandler;
     @Autowired
     private MyAuthenticationEntryPoint myAuthenticationEntryPoint;
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(databaseUserDetailsService);
-        provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        provider.setUserDetailsService(authUserDetailsService);
+        provider.setPasswordEncoder(bCryptPasswordEncoder);
         return provider;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                // 关闭seesion创建和使用
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 // 关闭跨域验证
                 .and().csrf().disable()
                 .authorizeRequests()

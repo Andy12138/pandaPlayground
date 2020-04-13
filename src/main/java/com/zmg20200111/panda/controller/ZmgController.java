@@ -2,6 +2,7 @@ package com.zmg20200111.panda.controller;
 
 import com.zmg20200111.panda.bean.ResultVO;
 import com.zmg20200111.panda.utils.file.FileUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,5 +53,12 @@ public class ZmgController {
         System.out.println("目标机ip" + request.getRemoteAddr());
         System.out.println("目标机ip" + request.getRemoteHost());
         System.out.println("目标机port" + request.getRemotePort());
+    }
+
+
+    @PreAuthorize("hasAuthority('admin')")
+    @GetMapping("/testRole")
+    public ResultVO testRole() {
+        return ResultVO.success("你有资格调用这个接口！");
     }
 }

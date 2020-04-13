@@ -1,2 +1,6 @@
 server:
   port: 8001
+
+app.auth:
+    jwtTokenSecret: panda
+    tokenExpiredMs: 604800000
