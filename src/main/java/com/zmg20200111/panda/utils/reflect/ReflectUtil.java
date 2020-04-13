@@ -71,7 +71,7 @@ public class ReflectUtil {
     }
 
     /**
-     * 判断map中的key是否和对象中的字段名一样（例如：user_name == userName）
+     * 判断map中的key是否和对象中的字段名一样（例如：user_name == username）
      * @param mapKey
      * @param fieldName
      * @return

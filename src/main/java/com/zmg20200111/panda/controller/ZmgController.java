@@ -2,6 +2,7 @@ package com.zmg20200111.panda.controller;
 
 import com.zmg20200111.panda.bean.ResultVO;
 import com.zmg20200111.panda.utils.file.FileUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,10 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Andy
+ */
 @RestController
+@RequestMapping("/api/zmg")
 public class ZmgController {
 
-    @RequestMapping("/hello")
+    @GetMapping("/hello")
     public String hello() {
         return "hello zmg";
     }

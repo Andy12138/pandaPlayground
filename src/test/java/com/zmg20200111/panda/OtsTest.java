@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -114,5 +115,15 @@ public class OtsTest {
         g2d.dispose();
         // 保存文件
         ImageIO.write(image, "png", new File("d:\\tmp\\out\\黑体.png"));
+    }
+
+    @Test
+    public void passwordTest() {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//        String encode = passwordEncoder.encode("123456");
+        // $2a$10$oyml2lkPX477EuzA1buXWeH6Pr7OTbOtfb7m7V/MHw5hdLZEDEKnC
+        // $2a$10$z5Me/7e4UL6boTE5G4sTiup7SuhsTFSZ6gCawM59MeHMG.Y7d6VY6
+//        System.out.println(encode);
+        System.out.println(passwordEncoder.matches("123456", "$2a$10$oyml2lkPX477EuzA1buXWeH6Pr7OTbOtfb7m7V/MHw5hdLZEDEKnC"));
     }
 }
