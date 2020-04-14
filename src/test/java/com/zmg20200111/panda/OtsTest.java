@@ -1,5 +1,7 @@
 package com.zmg20200111.panda;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -125,5 +127,19 @@ public class OtsTest {
         // $2a$10$z5Me/7e4UL6boTE5G4sTiup7SuhsTFSZ6gCawM59MeHMG.Y7d6VY6
 //        System.out.println(encode);
         System.out.println(passwordEncoder.matches("123456", "$2a$10$oyml2lkPX477EuzA1buXWeH6Pr7OTbOtfb7m7V/MHw5hdLZEDEKnC"));
+    }
+
+    @Test
+    public void tokenTest() {
+        Date expireTime = new Date(System.currentTimeMillis() + 1000*60*60);
+        String token = Jwts.builder()
+                .setSubject("zmg")
+                .setExpiration(expireTime)
+                .setIssuedAt(new Date())
+                .signWith(SignatureAlgorithm.HS512, "panda")
+                .compact();
+        System.out.println("生成的token: " + token);
+        System.out.println("到期时间：" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(expireTime));
+
     }
 }

@@ -32,6 +32,6 @@ public class MyAudhenticationSuccessHandler extends SavedRequestAwareAuthenticat
         response.setStatus(HttpServletResponse.SC_OK);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.getWriter().println("{\"tokenType\":\"Bearer\",\"token\": \"" + jwtTokenProvider.createToken(authentication) + "\"}");
+        response.getWriter().println("{\"token\":\"Bearer \" + " + jwtTokenProvider.createToken(authentication) + "\"}");
     }
 }
