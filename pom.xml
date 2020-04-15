@@ -8,10 +8,10 @@
         <version>2.2.2.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.zmg20200111</groupId>
-    <artifactId>pandaShow</artifactId>
+    <groupId>com.zmg</groupId>
+    <artifactId>pandaPlayground</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>pandaShow</name>
+    <name>pandaPlayground</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
