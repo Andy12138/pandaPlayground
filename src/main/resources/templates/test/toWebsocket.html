@@ -1,0 +1,34 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="http://cdn.bootcss.com/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdn.bootcss.com/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script type="text/javascript">
+        function jumpPage() {
+            var username = $("#username").val();
+            var token = $("#token").val();
+            console.info("username:" + username + "\ntoken:" +token);
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8001/api/jumpPage/stompSocket?username=" + username + "&token=" + token,
+                beforeSend: function(request) {
+                    request.setRequestHeader("auth-token", token);
+                },
+                headers:{'Content-Type':'application/json;charset=utf8','auth-token': token},
+                success: function(result) {
+                    alert(result);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div>
+    <input type="text" id="username" placeholder="username">
+    <input type="text" id="token" placeholder="token">
+    <input type="button" value="点啊！" onclick="jumpPage();">
+</div>
+</body>
+</html>
