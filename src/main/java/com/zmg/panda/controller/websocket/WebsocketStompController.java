@@ -10,7 +10,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +18,8 @@ import java.util.Map;
 /**
  * @author Andy
  */
-@MessageMapping("/api/websocket")
-@Controller
+//@MessageMapping("/api/websocket")
+@RestController
 @Slf4j
 public class WebsocketStompController {
 
@@ -81,7 +81,6 @@ public class WebsocketStompController {
         Map msg = (Map)JSON.parse(json);
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("msg", "SendToUser服务器收到客户端请求，发送私信消息:" + msg.get("msg"));
-
         return data;
     }
 

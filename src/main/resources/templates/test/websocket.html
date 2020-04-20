@@ -31,8 +31,9 @@
         var token = $("#token").val();
         console.info("token:" +token);
         $.ajax({
-            url: "http://localhost:8001/api/jumpPage/authUser",
+            url: "http://localhost:8001/api/jumpPage/authUser?token=" + token,
             type: "GET",
+            xhrFields: {withCredentials: true},     //与服务器配合使用标识允许携带cookie
             beforeSend: function(request) {
                 request.setRequestHeader('auth-token', token);
             },
@@ -117,7 +118,7 @@
              * 2. 演示自己发送给自己，做websocket向服务器请求资源而已，然后服务器你就把资源给我就行了，
              *    别的用户就不用你广播推送了，简单点，就是我请求，你就推送给我
              */
-            stompClient.subscribe('/user/userTest/own',function (message) {
+            stompClient.subscribe('/api/websocket/user/userTest/own',function (message) {
                 var msg = JSON.parse(message.body).msg;
                 console.log("接收到私信信息SendToUser：" + msg);
                 alert("接收到私信信息SendToUser：" + msg);
@@ -131,7 +132,7 @@
              *    如果在拦截器中配置了认证路径，可以不带参数，不过推荐用带参数的写法
              *
              */
-            stompClient.subscribe('/user/userTest/callBack',function (message) {
+            stompClient.subscribe('/api/websocket/user/userTest/callBack',function (message) {
 
                 var msg  = message.body;
                 console.log("接收到点对点SendToUser：" + msg);
@@ -156,7 +157,7 @@
          *     可选参数,可以携带消息头信息，也可以做事务，如果没有，传{}
          *  3. body 为发送信息的 body，字符串，可选参数
          */
-        stompClient.send("/app/sendChatMsg/" + $("#groupId").val() ,{},JSON.stringify(data));
+        stompClient.send("/api/websocket/app/sendChatMsg/" + $("#groupId").val() ,{},JSON.stringify(data));
     }
 
     // 发送给自己
@@ -170,7 +171,7 @@
          *     可选参数,可以携带消息头信息，也可以做事务，如果没有，传{}
          *  3. body 为发送信息的 body，字符串，可选参数
          */
-        stompClient.send("/app/sendChatMsgByOwn",{},JSON.stringify(data));
+        stompClient.send("/api/websocket/app/sendChatMsgByOwn",{},JSON.stringify(data));
     }
 
     // 发送点对点消息
@@ -186,7 +187,7 @@
          *  3. body 为发送信息的 body，字符串，可选参数
          *  4. accountId这个参数其实可以通过header传过去，不过因为是restful风格，所以就跟在url上
          */
-        stompClient.send("/app/sendChatMsgById/" + accountId,{},JSON.stringify(data));
+        stompClient.send("/api/websocket/app/sendChatMsgById/" + accountId,{},JSON.stringify(data));
     }
 
     // 通过sock对象监听每个事件节点，非必须，这里开启了stomp的websocket 也不会生效了

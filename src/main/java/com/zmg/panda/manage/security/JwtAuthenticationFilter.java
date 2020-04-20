@@ -17,7 +17,10 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+
+import static com.zmg.panda.manage.auth.JwtTokenProvider.TOKEN_PREFIX;
 
 /**
  * @author Andy
@@ -40,9 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.isNotBlank(token) && jwtTokenProvider.validateToken(token)) {
             String username = getUsernameByJwt(token, authParametersConf.getJwtTokenSecret());
             UserDetails userDetails = authUserDetailsService.getUserDetailByUserName(username);
-            UsernamePasswordAuthenticationToken authenticaion = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authenticaion.setDetails(userDetails);
-            SecurityContextHolder.getContext().setAuthentication(authenticaion);
+            UsernamePasswordAuthenticationToken authentications = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authentications.setDetails(userDetails);
+            SecurityContextHolder.getContext().setAuthentication(authentications);
+            // 将登陆用户存入session
+            HttpSession session = request.getSession();
+            session.setAttribute("username", username);
         } else {
             log.error("Token is null!");
         }
@@ -57,9 +63,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String getJwtByRequest(HttpServletRequest request) {
         String token = request.getHeader("auth-token");
         if (StringUtils.isBlank(token)) {
-            token = request.getParameter("auth-token");
+            token = request.getParameter("token");
         }
-        if (StringUtils.isNotBlank(token) && token.startsWith("Bearer")) {
+        if (StringUtils.isNotBlank(token) && token.startsWith(TOKEN_PREFIX)) {
             return token.replace("Bearer", "");
         }
         return null;

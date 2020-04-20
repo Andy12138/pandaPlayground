@@ -1,19 +1,16 @@
 package com.zmg.panda.controller.websocket;
 
-import com.zmg.panda.db.VisualDB;
-import com.zmg.panda.manage.bean.User;
 import com.zmg.panda.service.AuthUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+import javax.servlet.http.HttpSession;
+
+@RestController
 @RequestMapping("/api/jumpPage")
 public class WebSocketController {
 
@@ -35,7 +32,9 @@ public class WebSocketController {
 
     // 跳转stomp test 页面
     @GetMapping(value = "/authUser")
-    public String toStompWebSocket(){
+    public String toStompWebSocket(HttpSession session, @RequestParam String token){
+        session.setAttribute("god", "钟名桂");
+        System.out.println(token);
 //        String token = VisualDB.TOKEN_DB.get(username);
         // 这里封装一个登录的用户组参数，模拟进入通讯后的简单初始化
 //        model.addAttribute("groupId","pandaGroup");

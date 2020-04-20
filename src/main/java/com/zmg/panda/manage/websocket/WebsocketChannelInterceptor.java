@@ -1,7 +1,10 @@
 package com.zmg.panda.manage.websocket;
 
+import com.zmg.panda.manage.auth.JwtTokenProvider;
 import com.zmg.panda.manage.bean.WebsocketUserAuthentication;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -9,12 +12,17 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 
+import static com.zmg.panda.manage.auth.JwtTokenProvider.TOKEN_PREFIX;
+
 
 /**
  * @author Andy
  */
 @Slf4j
 public class WebsocketChannelInterceptor implements ChannelInterceptor {
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     /**
      * 消息发送之前调用
@@ -29,10 +37,15 @@ public class WebsocketChannelInterceptor implements ChannelInterceptor {
              * 3. header参数的key可以一样，取出来就是list
              * 4. 样例代码header中只有一个token，所以直接取0位
              */
-            String token = accessor.getNativeHeader("auth-token").get(0);
-            WebsocketUserAuthentication user = (WebsocketUserAuthentication)accessor.getUser();
-            log.info("认证用户:{}", user);
-            log.info("页面传递令牌:{}", token);
+            String token = accessor.getFirstNativeHeader("auth-token");
+            if (StringUtils.isNotBlank(token) && jwtTokenProvider.validateToken(token.replace(TOKEN_PREFIX, ""))) {
+                WebsocketUserAuthentication user = (WebsocketUserAuthentication)accessor.getUser();
+                log.info("认证用户:{}", user);
+                log.info("页面传递令牌:{}", token);
+            } else {
+                log.error("websocket token 认证失败！");
+                throw new RuntimeException("websocket token 认证失败！");
+            }
         }
         if (StompCommand.SEND.equals(accessor.getCommand())) {
             log.info("发送消息命令");

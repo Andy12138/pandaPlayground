@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -63,7 +62,7 @@ public class WebsocketStompConf implements WebSocketMessageBrokerConfigurer {
 //                .setHeartbeatValue(new long[]{10000, 10000})
 //                .setTaskScheduler(taskScheduler);
 
-        registry.setApplicationDestinationPrefixes("/app");
+        registry.setApplicationDestinationPrefixes("/api/websocket/app");
         /*
          *  1. 配置一对一消息前缀， 客户端接收一对一消息需要配置的前缀 如“'/user/'+userid + '/message'”，
          *     是客户端订阅一对一消息的地址 stompClient.subscribe js方法调用的地址
@@ -71,7 +70,7 @@ public class WebsocketStompConf implements WebSocketMessageBrokerConfigurer {
          *     而不是 AnnotationMethodMessageHandler 或  SimpleBrokerMessageHandler
          *     or StompBrokerRelayMessageHandler，是在@SendToUser的URL前加“user+sessionId"组成
          */
-        registry.setUserDestinationPrefix("/user");
+        registry.setUserDestinationPrefix("/api/websocket/user");
     }
 
     /**

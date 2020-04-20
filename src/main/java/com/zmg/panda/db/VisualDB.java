@@ -20,4 +20,7 @@ public class VisualDB {
         USER_DB.put("zmg", new User("zmg", "admin", "$2a$10$oyml2lkPX477EuzA1buXWeH6Pr7OTbOtfb7m7V/MHw5hdLZEDEKnC", Collections.singletonList(new UserRole("zmg", "admin"))));
         USER_DB.put("lfq", new User("lfq", "staff", "$2a$10$oyml2lkPX477EuzA1buXWeH6Pr7OTbOtfb7m7V/MHw5hdLZEDEKnC", Collections.singletonList(new UserRole("lfq", "staff"))));
     }
+
+    // zmg Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ6bWciLCJleHAiOjE1ODc5NDk5NzYsImlhdCI6MTU4NzM0NTE3Nn0.bVK93x1o4oWqdpdKO2c5YcUL5gGCLF2a5puuJW9ekqqJmQ8sItv6RkoyRvU9jB1Gv29bf3-eYL7ok2ZtpYbKuw
+    // lfq Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsZnEiLCJleHAiOjE1ODc5NjkxNzAsImlhdCI6MTU4NzM2NDM3MH0.8_YeOCx3lSvKGdsA-k45gSRhXvSv6vZtXbFx7DfSdgoxKmYECpBunUF9r2H8NJazDPQs9HK0a-MIJRJF3QvpKg
 }

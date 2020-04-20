@@ -18,6 +18,11 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
+    /**
+     * token前缀
+     */
+    public static final String TOKEN_PREFIX = "Bearer";
+
     @Autowired
     private AuthParametersConf authParametersConf;
 

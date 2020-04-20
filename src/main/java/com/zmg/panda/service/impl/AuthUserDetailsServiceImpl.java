@@ -1,21 +1,19 @@
 package com.zmg.panda.service.impl;
 
-import com.zmg.panda.service.AuthUserDetailsService;
 import com.zmg.panda.manage.bean.User;
 import com.zmg.panda.manage.bean.UserRole;
+import com.zmg.panda.service.AuthUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.zmg.panda.db.VisualDB.*;
+import static com.zmg.panda.db.VisualDB.USER_DB;
 
 /**
  * @author Andy
