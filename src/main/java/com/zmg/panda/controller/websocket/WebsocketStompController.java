@@ -1,12 +1,15 @@
 package com.zmg.panda.controller.websocket;
 
 import com.alibaba.fastjson.JSON;
+import com.zmg.panda.bean.ResultVO;
+import com.zmg.panda.bean.WsMessage;
 import com.zmg.panda.manage.bean.WebsocketUserAuthentication;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -43,6 +46,7 @@ public class WebsocketStompController {
                                            StompHeaderAccessor headerAccessor) {
         // 这里拿到的user对象是在WebSocketChannelInterceptor拦截器中绑定上的对象
         WebsocketUserAuthentication user =(WebsocketUserAuthentication)headerAccessor.getUser();
+        validateEnableUser(user);
         log.info("公告controller 中获取用户登录令牌：" + user.getName());
         log.info("公告拿到客户端传递分组参数:" + groupId);
         // 这里拿到的json 字符串，其实可以自动绑定到对象上
@@ -71,7 +75,7 @@ public class WebsocketStompController {
     {
         // 这里拿到的user对象是在WebSocketChannelInterceptor拦截器中绑定上的对象
         WebsocketUserAuthentication user = (WebsocketUserAuthentication)headerAccessor.getUser();
-
+        validateEnableUser(user);
         log.info("SendToUser controller 中获取用户登录令牌：" + user.getName()
                 + " socketId:" + headerAccessor.getSessionId());
 
@@ -106,7 +110,7 @@ public class WebsocketStompController {
 
         // 这里拿到的user对象是在WebSocketChannelInterceptor拦截器中绑定上的对象
         WebsocketUserAuthentication user = (WebsocketUserAuthentication)headerAccessor.getUser();
-
+        validateEnableUser(user);
         log.info("SendToUser controller 中获取用户登录令牌：" + user.getName()
                 + " socketId:" + headerAccessor.getSessionId());
 
@@ -118,5 +122,20 @@ public class WebsocketStompController {
 
         data.put("msg", "callBack 消息已推送，消息内容：" + msg.get("msg"));
         return data;
+    }
+
+    @MessageMapping("/sendMessageByZmg")
+    @SendToUser("/userTest/callBackByZmg")
+    public ResultVO<WsMessage> sendMessageByZmg(WsMessage wsMessage, StompHeaderAccessor accessor) {
+        log.info("来自{}发送给{}的消息；消息内容为：{}", accessor.getUser().getName(), wsMessage.getToUser(), wsMessage.getMessageText());
+        log.info("当前socketID为：{}", accessor.getSessionId());
+        messagingTemplate.convertAndSendToUser(wsMessage.getToUser(), "/userTest/callBack", wsMessage.getMessageText());
+        return ResultVO.success(wsMessage);
+    }
+
+    private void validateEnableUser(WebsocketUserAuthentication user) {
+        if (user == null) {
+            throw new RuntimeException("您还未登录即时通讯！");
+        }
     }
 }

@@ -50,19 +50,22 @@ public class WebsocketStompConf implements WebSocketMessageBrokerConfigurer {
 //        // 初始化
 //        taskScheduler.initialize();
 
-        /*
-         * spring 内置broker对象
-         * 1. 配置代理域，可以配置多个，此段代码配置代理目的地的前缀为 /topicTest 或者 /userTest
-         *    我们就可以在配置的域上向客户端推送消息
-         * 2，进行心跳设置，第一值表示server最小能保证发的心跳间隔毫秒数, 第二个值代码server希望client发的心跳间隔毫秒数
-         * 3. 可以配置心跳线程调度器 setHeartbeatValue这个不能单独设置，不然不起作用，要配合setTaskScheduler才可以生效
-         *    调度器我们可以自己写一个，也可以自己使用默认的调度器 new DefaultManagedTaskScheduler()
-         */
+//        *
+//         * spring 内置broker对象
+//         * 1. 配置代理域，可以配置多个，此段代码配置代理目的地的前缀为 /topicTest 或者 /userTest
+//         *    我们就可以在配置的域上向客户端推送消息
+//         * 2，进行心跳设置，第一值表示server最小能保证发的心跳间隔毫秒数, 第二个值代码server希望client发的心跳间隔毫秒数
+//         * 3. 可以配置心跳线程调度器 setHeartbeatValue这个不能单独设置，不然不起作用，要配合setTaskScheduler才可以生效
+//         *    调度器我们可以自己写一个，也可以自己使用默认的调度器 new DefaultManagedTaskScheduler()
         registry.enableSimpleBroker("/topicTest", "/userTest");
 //                .setHeartbeatValue(new long[]{10000, 10000})
 //                .setTaskScheduler(taskScheduler);
 
-        registry.setApplicationDestinationPrefixes("/api/websocket/app");
+        /*
+         *  "/app" 为配置应用服务器的地址前缀，表示所有以/app 开头的客户端消息或请求
+         *  都会路由到带有@MessageMapping 注解的方法中
+         */
+        registry.setApplicationDestinationPrefixes("/app");
         /*
          *  1. 配置一对一消息前缀， 客户端接收一对一消息需要配置的前缀 如“'/user/'+userid + '/message'”，
          *     是客户端订阅一对一消息的地址 stompClient.subscribe js方法调用的地址
@@ -70,7 +73,7 @@ public class WebsocketStompConf implements WebSocketMessageBrokerConfigurer {
          *     而不是 AnnotationMethodMessageHandler 或  SimpleBrokerMessageHandler
          *     or StompBrokerRelayMessageHandler，是在@SendToUser的URL前加“user+sessionId"组成
          */
-        registry.setUserDestinationPrefix("/api/websocket/user");
+        registry.setUserDestinationPrefix("/user");
     }
 
     /**
@@ -100,10 +103,10 @@ public class WebsocketStompConf implements WebSocketMessageBrokerConfigurer {
 //                .maxPoolSize(3)
 //                .keepAliveSeconds(60);
 
-        /*
-         * 添加stomp自定义拦截器，可以根据业务做一些处理
-         * 消息拦截器，实现ChannelInterceptor接口
-         */
+//        /*
+//         * 添加stomp自定义拦截器，可以根据业务做一些处理
+//         * 消息拦截器，实现ChannelInterceptor接口
+//         */
         registration.interceptors(websocketChannelInterceptor());
     }
 

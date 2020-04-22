@@ -28,10 +28,10 @@ public class DrawJgpImageUtils {
             log.info("图片的长：{}，高：{}", baseImg.getWidth(), baseImg.getHeight());
             // 获取画笔对象
             Graphics2D g = baseImg.createGraphics();
-            // *****
-            baseImg = g.getDeviceConfiguration().createCompatibleImage(baseImg.getWidth(), baseImg.getHeight(), Transparency.TRANSLUCENT);
-            g.dispose();
-            g = baseImg.createGraphics();
+//            // *****
+//            baseImg = g.getDeviceConfiguration().createCompatibleImage(baseImg.getWidth(), baseImg.getHeight(), Transparency.TRANSLUCENT);
+//            g.dispose();
+//            g = baseImg.createGraphics();
 
             // 画笔对象写入的文字去除锯齿
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
@@ -68,8 +68,8 @@ public class DrawJgpImageUtils {
             param.setQuality(1f, true);
             encoder.setJPEGEncodeParam(param);
             encoder.encode(baseImg);
-            BufferedImage bufferedImage = new BufferedImage(2560, 1600, BufferedImage.TYPE_3BYTE_BGR);
-            ImageIO.write(bufferedImage, "png", os);
+//            BufferedImage bufferedImage = new BufferedImage(2560, 1600, BufferedImage.TYPE_3BYTE_BGR);
+//            ImageIO.write(bufferedImage, "png", os);
             os.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,7 +98,7 @@ public class DrawJgpImageUtils {
 
     public static void main(String[] args) {
         DrawJgpImageUtils utils = new DrawJgpImageUtils();
-        utils.drawRegistrationCertificate("D:\\tmp\\zjpng.png", utils.rcParams);
+        utils.drawRegistrationCertificate("D:\\tmp\\real.jpg", utils.rcParams);
     }
 
     private RegistrationCertificate rcParams = new RegistrationCertificate();
@@ -107,7 +107,7 @@ public class DrawJgpImageUtils {
         rcParams.setOrganName("中山");
         rcParams.setOrganNameFamily("楷体");
         rcParams.setOrganNameSize(65);
-        rcParams.setOrganNameTop(180);
+        rcParams.setOrganNameTop(1180);
         rcParams.setOrganNameBoxLeft(770);
         rcParams.setOrganNameBoxReght(1540);
 

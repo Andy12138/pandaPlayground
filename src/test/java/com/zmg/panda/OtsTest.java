@@ -133,7 +133,7 @@ public class OtsTest {
     public void tokenTest() {
         Date expireTime = new Date(System.currentTimeMillis() + 1000*60*60);
         String token = Jwts.builder()
-                .setSubject("zmg")
+                .setSubject("sdw")
                 .setExpiration(expireTime)
                 .setIssuedAt(new Date())
                 .signWith(SignatureAlgorithm.HS512, "panda")

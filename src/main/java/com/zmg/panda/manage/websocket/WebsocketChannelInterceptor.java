@@ -31,6 +31,7 @@ public class WebsocketChannelInterceptor implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+            log.info("开始连接");
             /*
              * 1. 这里获取就是JS stompClient.connect(headers, function (frame){.......}) 中header的信息
              * 2. JS中header可以封装多个参数，格式是{key1:value1,key2:value2}
@@ -40,6 +41,7 @@ public class WebsocketChannelInterceptor implements ChannelInterceptor {
             String token = accessor.getFirstNativeHeader("auth-token");
             if (StringUtils.isNotBlank(token) && jwtTokenProvider.validateToken(token.replace(TOKEN_PREFIX, ""))) {
                 WebsocketUserAuthentication user = (WebsocketUserAuthentication)accessor.getUser();
+                validateEnableUser(user);
                 log.info("认证用户:{}", user);
                 log.info("页面传递令牌:{}", token);
             } else {
@@ -48,12 +50,18 @@ public class WebsocketChannelInterceptor implements ChannelInterceptor {
             }
         }
         if (StompCommand.SEND.equals(accessor.getCommand())) {
-            log.info("发送消息命令");
+            log.info(accessor.getUser().getName() + "发送消息命令");
         }
         if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-            log.info("断开连接");
+            log.info(accessor.getUser().getName() + "断开连接");
         }
         return message;
+    }
+
+    private void validateEnableUser(WebsocketUserAuthentication user) {
+        if (user == null) {
+            throw new RuntimeException("您还未登录即时通讯！");
+        }
     }
 
     /**

@@ -23,13 +23,14 @@ public class MyPrincipalHandshakeHandler extends DefaultHandshakeHandler {
     @Override
     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
         HttpSession httpSession = getSession(request);
-        String username = (String)httpSession.getAttribute("username");
-        if(StringUtils.isEmpty(username)){
+        if (httpSession != null && httpSession.getAttribute("username") != null) {
+            String username = String.valueOf(httpSession.getAttribute("username"));
+            log.info(" MyDefaultHandshakeHandler login = " + username);
+            return new WebsocketUserAuthentication(username);
+        } else {
             log.error("未登录系统，禁止登录websocket!");
             return null;
         }
-        log.info(" MyDefaultHandshakeHandler login = " + username);
-        return new WebsocketUserAuthentication(username);
     }
 
     private HttpSession getSession(ServerHttpRequest request) {

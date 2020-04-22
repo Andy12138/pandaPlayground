@@ -8,13 +8,15 @@
 </head>
 <body>
 <div>
-    <input type="text" id="username" placeholder="登录名">
-    <input type="text" id="token" placeholder="token">
-    <input type="button" value="点击token认证！" onclick="jumpPage();">
+    <input type="text" id="token" placeholder="请输入token登入">
+    <input type="button" value="登入认证" onclick="jumpPage();">
+    <br>
+    登入用户：<input type="text" id="username" readonly placeholder="自动填充,无需输入">
     <br>
     <span>消息</span>
     <br>
-    <input type="button" value="点击连接websocket" onclick="connectWebsocket()">
+    <input type="button" value="连接即时通讯" onclick="connectWebsocket()">
+    <input type="button" value="断开即时通讯" onclick="disconnect()">
     <br>
     <input type="hidden" id="groupId" value="pandaGroup">
     <input type="text" id="message" name="message">
@@ -24,6 +26,7 @@
     <span>接收人</span>
     <input type="text" id="accountId" name="accountId">
     <input type="button" id="sendMsgById" name="sendMsgById" value="点对点消息" onclick="sendMsgById();">
+    <input type="button" id="sendMsgByZmg" value="熊猫点对点" onclick="sendMessageByZmg()" >
 </div>
 </body>
 <script type="text/javascript">
@@ -31,7 +34,7 @@
         var token = $("#token").val();
         console.info("token:" +token);
         $.ajax({
-            url: "http://localhost:8001/api/jumpPage/authUser?token=" + token,
+            url: "http://192.168.3.18:8001/api/jumpPage/authUser?token=" + token,
             type: "GET",
             xhrFields: {withCredentials: true},     //与服务器配合使用标识允许携带cookie
             beforeSend: function(request) {
@@ -39,7 +42,8 @@
             },
             headers:{'Content-Type':'application/json;charset=utf8','auth-token': token},
             success: function(result) {
-                alert(result);
+                alert("认证成功");
+                $("#username").val(result);
             }
         });
     }
@@ -55,21 +59,9 @@
     // 定义全局变量 stomp socket
     var stompClient,socket;
 
-    // $(document).ready(function () {
-    //     if (window.WebSocket){
-    //         websocketConfig();
-    //     } else {
-    //         alert("错误","浏览器不支持websocket技术通讯.");
-    //     }
-    // });
-
     // test 配置
     function websocketConfig() {
-        /*
-         * 1. 连接url为endpointChat的endpoint,对应后台WebSoccketConfig的配置
-         * 2. SockJS 所处理的URL 是 "http://" 或 "https://" 模式，而不是 "ws://" or  "wss://"
-         */
-        socket = new SockJS("http://localhost:8001/api/websocket/server");
+        socket = new SockJS("http://192.168.3.18:8001/api/websocket/server");
 
         // 通过sock对象监听每个事件节点，非必须,这个必须放在stompClient的方法前面
         sockHandle();
@@ -118,7 +110,7 @@
              * 2. 演示自己发送给自己，做websocket向服务器请求资源而已，然后服务器你就把资源给我就行了，
              *    别的用户就不用你广播推送了，简单点，就是我请求，你就推送给我
              */
-            stompClient.subscribe('/api/websocket/user/userTest/own',function (message) {
+            stompClient.subscribe('/user/userTest/own',function (message) {
                 var msg = JSON.parse(message.body).msg;
                 console.log("接收到私信信息SendToUser：" + msg);
                 alert("接收到私信信息SendToUser：" + msg);
@@ -132,11 +124,17 @@
              *    如果在拦截器中配置了认证路径，可以不带参数，不过推荐用带参数的写法
              *
              */
-            stompClient.subscribe('/api/websocket/user/userTest/callBack',function (message) {
+            stompClient.subscribe('/user/userTest/callBack',function (message) {
 
                 var msg  = message.body;
                 console.log("接收到点对点SendToUser：" + msg);
                 alert("接收到点对点SendToUser：" + msg);
+            });
+
+            stompClient.subscribe("/user/userTest/callBackByZmg", function (result) {
+                console.info("result" + result);
+                var msg = result.body;
+                console.info(msg);
             });
 
         }, function (error) {
@@ -157,7 +155,7 @@
          *     可选参数,可以携带消息头信息，也可以做事务，如果没有，传{}
          *  3. body 为发送信息的 body，字符串，可选参数
          */
-        stompClient.send("/api/websocket/app/sendChatMsg/" + $("#groupId").val() ,{},JSON.stringify(data));
+        stompClient.send("/app/sendChatMsg/" + $("#groupId").val() ,{},JSON.stringify(data));
     }
 
     // 发送给自己
@@ -171,7 +169,7 @@
          *     可选参数,可以携带消息头信息，也可以做事务，如果没有，传{}
          *  3. body 为发送信息的 body，字符串，可选参数
          */
-        stompClient.send("/api/websocket/app/sendChatMsgByOwn",{},JSON.stringify(data));
+        stompClient.send("/app/sendChatMsgByOwn",{},JSON.stringify(data));
     }
 
     // 发送点对点消息
@@ -187,7 +185,16 @@
          *  3. body 为发送信息的 body，字符串，可选参数
          *  4. accountId这个参数其实可以通过header传过去，不过因为是restful风格，所以就跟在url上
          */
-        stompClient.send("/api/websocket/app/sendChatMsgById/" + accountId,{},JSON.stringify(data));
+        stompClient.send("/app/sendChatMsgById/" + accountId,{},JSON.stringify(data));
+    }
+
+    // 熊猫测试点对点封装
+    function sendMessageByZmg() {
+        var msg = $("#message").val();
+        var accountId = $("#accountId").val();
+        var data = {"toUser": accountId, "messageText": msg};
+        console.info("发送的消息为：" + data);
+        stompClient.send("/app/sendMessageByZmg", {}, JSON.stringify(data));
     }
 
     // 通过sock对象监听每个事件节点，非必须，这里开启了stomp的websocket 也不会生效了
