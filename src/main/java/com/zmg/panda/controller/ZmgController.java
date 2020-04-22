@@ -1,6 +1,6 @@
 package com.zmg.panda.controller;
 
-import com.zmg.panda.bean.ResultVO;
+import com.zmg.panda.common.bean.ResultVO;
 import com.zmg.panda.utils.file.FileUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -58,7 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().csrf().disable()
                 .authorizeRequests()
                 // /api/root/** 的接口全部放行
-                .antMatchers("/api/root/**", "/api/websocket/**").permitAll()
+                .antMatchers("/api/panda/**", "/api/websocket/**").permitAll()
                 .anyRequest().authenticated()
                 // post类型的登录连接
                 .and().formLogin().loginProcessingUrl("/api/login")

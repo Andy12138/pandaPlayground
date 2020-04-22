@@ -1,6 +1,12 @@
 server:
   port: 8001
 
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+# token认证
 app.auth:
     jwtTokenSecret: panda
     tokenExpiredMs: 604800000

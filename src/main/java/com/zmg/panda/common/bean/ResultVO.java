@@ -1,4 +1,4 @@
-package com.zmg.panda.bean;
+package com.zmg.panda.common.bean;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,5 +17,9 @@ public class ResultVO<T> {
 
     public static <T> ResultVO success(T data) {
         return new ResultVO<T>(data, 200, "request success!");
+    }
+
+    public static <T> ResultVO success() {
+        return new ResultVO<T>(null, 200, "request success!");
     }
 }

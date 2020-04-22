@@ -1,15 +1,14 @@
 package com.zmg.panda.controller.websocket;
 
 import com.alibaba.fastjson.JSON;
-import com.zmg.panda.bean.ResultVO;
-import com.zmg.panda.bean.WsMessage;
+import com.zmg.panda.common.bean.ResultVO;
+import com.zmg.panda.common.bean.WsMessage;
 import com.zmg.panda.manage.bean.WebsocketUserAuthentication;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;

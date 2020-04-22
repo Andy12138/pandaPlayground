@@ -1,4 +1,4 @@
-package com.zmg.panda.bean;
+package com.zmg.panda.common.bean;
 
 
 import lombok.Data;
