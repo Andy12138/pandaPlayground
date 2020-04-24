@@ -1,16 +1,24 @@
 package com.zmg.panda.manage.websocket;
 
+import com.alibaba.fastjson.JSONObject;
+import com.zmg.panda.common.bean.OnlineUser;
+import com.zmg.panda.common.constants.RedisPojo;
+import com.zmg.panda.conf.EnvConf;
 import com.zmg.panda.manage.auth.JwtTokenProvider;
 import com.zmg.panda.manage.bean.WebsocketUserAuthentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+
+import java.util.Date;
+import java.util.List;
 
 import static com.zmg.panda.manage.auth.JwtTokenProvider.TOKEN_PREFIX;
 
@@ -23,6 +31,10 @@ public class WebsocketChannelInterceptor implements ChannelInterceptor {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private EnvConf envConf;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     /**
      * 消息发送之前调用
@@ -42,6 +54,12 @@ public class WebsocketChannelInterceptor implements ChannelInterceptor {
             if (StringUtils.isNotBlank(token) && jwtTokenProvider.validateToken(token.replace(TOKEN_PREFIX, ""))) {
                 WebsocketUserAuthentication user = (WebsocketUserAuthentication)accessor.getUser();
                 validateEnableUser(user);
+                // 将登陆用户放入redis在线用户list
+                OnlineUser onlineUser = new OnlineUser();
+                onlineUser.setUsername(user.getName());
+                onlineUser.setHostPort(envConf.getHostPort());
+                onlineUser.setLoginTime(new Date());
+                redisTemplate.opsForList().rightPush(RedisPojo.ONLINE_USERS, JSONObject.toJSONString(onlineUser));
                 log.info("认证用户:{}", user);
                 log.info("页面传递令牌:{}", token);
             } else {
@@ -54,6 +72,17 @@ public class WebsocketChannelInterceptor implements ChannelInterceptor {
         }
         if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
             log.info(accessor.getUser().getName() + "断开连接");
+            Long onlineNum = redisTemplate.opsForList().size(RedisPojo.ONLINE_USERS);
+            List<String> onlineUsersStr = redisTemplate.opsForList().range(RedisPojo.ONLINE_USERS, 0, onlineNum - 1);
+            if (onlineUsersStr != null) {
+                onlineUsersStr.forEach(e -> {
+                    OnlineUser onlineUser = JSONObject.parseObject(e, OnlineUser.class);
+                    if (onlineUser.getUsername().equals(accessor.getUser().getName())) {
+                        // 删除，表示下线
+                        redisTemplate.opsForList().remove(RedisPojo.ONLINE_USERS, 0, e);
+                    }
+                });
+            }
         }
         return message;
     }

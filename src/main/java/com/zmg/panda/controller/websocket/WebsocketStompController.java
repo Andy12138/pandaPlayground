@@ -3,7 +3,9 @@ package com.zmg.panda.controller.websocket;
 import com.alibaba.fastjson.JSON;
 import com.zmg.panda.common.bean.ResultVO;
 import com.zmg.panda.common.bean.WsMessage;
+import com.zmg.panda.common.constants.RedisPojo;
 import com.zmg.panda.manage.bean.WebsocketUserAuthentication;
+import com.zmg.panda.service.IRedisPublishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -27,6 +29,8 @@ public class WebsocketStompController {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private IRedisPublishService iRedisPublishService;
 
     /**
      * 发送广播消息，所有订阅了此路径的用户都会收到此消息
@@ -125,10 +129,13 @@ public class WebsocketStompController {
 
     @MessageMapping("/sendMessageByZmg")
     @SendToUser("/userTest/callBackByZmg")
-    public ResultVO<WsMessage> sendMessageByZmg(WsMessage wsMessage, StompHeaderAccessor accessor) {
-        log.info("来自{}发送给{}的消息；消息内容为：{}", accessor.getUser().getName(), wsMessage.getToUser(), wsMessage.getMessageText());
+    public ResultVO sendMessageByZmg(WsMessage wsMessage, StompHeaderAccessor accessor) {
+        String loginUserName = accessor.getUser().getName();
+        log.info("来自{}发送给{}的消息；消息内容为：{}", loginUserName, wsMessage.getToUser(), wsMessage.getMessageText());
         log.info("当前socketID为：{}", accessor.getSessionId());
-        messagingTemplate.convertAndSendToUser(wsMessage.getToUser(), "/userTest/callBack", wsMessage.getMessageText());
+        wsMessage.setFromUser(loginUserName);
+        // 让redis转发
+        iRedisPublishService.sendMessage(RedisPojo.TOPIC_TITLE, wsMessage);
         return ResultVO.success(wsMessage);
     }
 

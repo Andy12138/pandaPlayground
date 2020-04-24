@@ -1,5 +1,7 @@
 package com.zmg.panda.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zmg.panda.service.IRedisPublishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,8 @@ public class RedisPublishServiceImpl implements IRedisPublishService {
     private StringRedisTemplate redisTemplate;
 
     @Override
-    public <T> void sendMessage(String channel, T message) {
+    public <T> void sendMessage(String channel, T param) {
+        String message = JSONObject.toJSONString(param);
         redisTemplate.convertAndSend(channel, message);
     }
 }

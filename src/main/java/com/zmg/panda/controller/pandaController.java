@@ -1,7 +1,7 @@
 package com.zmg.panda.controller;
 
 import com.zmg.panda.common.bean.ResultVO;
-import com.zmg.panda.common.constants.TopicName;
+import com.zmg.panda.common.constants.RedisPojo;
 import com.zmg.panda.service.IRedisPublishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,7 @@ public class pandaController {
 
     @GetMapping("/sendRedisMessage/{message}")
     public ResultVO<String> sendRedisMessage(@PathVariable String message) {
-        iPublishService.sendMessage(TopicName.TOPIC_TITLE, message);
+        iPublishService.sendMessage(RedisPojo.TOPIC_TITLE, message);
         return ResultVO.success();
     }
 }

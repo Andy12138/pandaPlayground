@@ -1,7 +1,7 @@
 package com.zmg.panda.conf;
 
-import com.zmg.panda.common.constants.TopicName;
-import com.zmg.panda.service.impl.RedisReceiver;
+import com.zmg.panda.common.constants.RedisPojo;
+import com.zmg.panda.service.IRedisReceiverService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -21,7 +21,7 @@ public class RedisSubscriberConf {
      * @return
      */
     @Bean
-    public MessageListenerAdapter listenerAdapter(RedisReceiver receiver) {
+    public MessageListenerAdapter listenerAdapter(IRedisReceiverService receiver) {
         // 自定义消息监听的处理方式
         return new MessageListenerAdapter(receiver, "receiveMessage");
     }
@@ -33,7 +33,7 @@ public class RedisSubscriberConf {
     public RedisMessageListenerContainer getRedisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory, MessageListenerAdapter listenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(redisConnectionFactory);
-        container.addMessageListener(listenerAdapter, new PatternTopic(TopicName.TOPIC_TITLE));
+        container.addMessageListener(listenerAdapter, new PatternTopic(RedisPojo.TOPIC_TITLE));
         return container;
     }
 }

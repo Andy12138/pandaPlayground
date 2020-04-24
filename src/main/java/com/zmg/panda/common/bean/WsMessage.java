@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class WsMessage {
+    private String fromUser;
     private String toUser;
     private String messageText;
 }

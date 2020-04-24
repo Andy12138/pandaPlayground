@@ -18,15 +18,18 @@ public class RedisTest {
 
     @Test
     public void listTest() {
-        Long size = redisTemplate.opsForList().size("user:zmg");
-        System.out.println("长度为：" + size);
-        redisTemplate.opsForList().leftPush("user:zmg", "66");
-//        redisTemplate.opsForList().leftPush("user:zmg", "88888");
-        redisTemplate.opsForList().remove("user:zmg", 0, null);
-        size = redisTemplate.opsForList().size("user:zmg");
 
+        redisTemplate.opsForList().rightPush("user:zmg", "77");
+        redisTemplate.opsForList().rightPush("user:zmg", "66");
+        redisTemplate.opsForList().rightPush("user:zmg", "77");
+        redisTemplate.opsForList().rightPush("user:zmg", "88");
+        Long size = redisTemplate.opsForList().size("user:zmg");
         List<String> range = redisTemplate.opsForList().range("user:zmg", 0, size - 1);
-        range.forEach(str -> System.out.println(str));
+        range.forEach(System.out::println);
+        System.out.println("---->");
+        redisTemplate.opsForList().remove("user:zmg", 0, "77");
+        range = redisTemplate.opsForList().range("user:zmg", 0, size - 1);
+        range.forEach(System.out::println);
     }
 
     @Test

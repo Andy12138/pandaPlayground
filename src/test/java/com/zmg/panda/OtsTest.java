@@ -131,14 +131,14 @@ public class OtsTest {
 
     @Test
     public void tokenTest() {
-        Date expireTime = new Date(System.currentTimeMillis() + 1000*60*60);
+        Date expireTime = new Date(System.currentTimeMillis() + 1000*60*60*24);
         String token = Jwts.builder()
-                .setSubject("sdw")
+                .setSubject("zmg")
                 .setExpiration(expireTime)
                 .setIssuedAt(new Date())
                 .signWith(SignatureAlgorithm.HS512, "panda")
                 .compact();
-        System.out.println("生成的token: " + token);
+        System.out.println("生成的token: Bearer " + token);
         System.out.println("到期时间：" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(expireTime));
 
     }
@@ -156,5 +156,12 @@ public class OtsTest {
         Object a = null;
         BB b = (BB)a;
         System.out.println(b);
+    }
+
+    @Test
+    public void dataTest() {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年mm月dd日");
+        System.out.println(simpleDateFormat.format(new Date()));
     }
 }

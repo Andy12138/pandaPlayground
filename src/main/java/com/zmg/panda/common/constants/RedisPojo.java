@@ -3,9 +3,13 @@ package com.zmg.panda.common.constants;
 /**
  * @author Andy
  */
-public class TopicName {
+public class RedisPojo {
     /**
      * redis 消息队列发布主题
      */
     public static final String TOPIC_TITLE = "im_user";
+    /**
+     * 在线用户队列
+     */
+    public static final String ONLINE_USERS = "online_user";
 }
