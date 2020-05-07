@@ -1,5 +1,7 @@
 package com.zmg.panda;
 
+import com.alibaba.fastjson.JSONObject;
+import com.zmg.panda.common.bean.WsMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -38,5 +41,22 @@ public class RedisTest {
         redisTemplate.opsForList().trim("user:zmg",0,0);
         //将list中的剩余的一个值也删除
         redisTemplate.opsForList().leftPop("user:zmg");
+    }
+
+    @Test
+    public void addTest() {
+        redisTemplate.opsForHash().put("zmgMap", "zmg", "zmgBody");
+        redisTemplate.opsForHash().put("zmgMap", "lfq", "lfqBody");
+        Object o = redisTemplate.opsForHash().get("zmgMap", "zmg");
+        System.out.println(o);
+        redisTemplate.opsForHash().delete("zmgMap", "zmg");
+        System.out.println(redisTemplate.opsForHash().hasKey("zmgMap", "zmg"));
+        System.out.println(redisTemplate.opsForHash().hasKey("zmgMap", "lfq"));
+        redisTemplate.opsForHash().delete("zmgMap", "zmg");
+        o = redisTemplate.opsForHash().get("zmgMap", "zmg");
+        System.out.println(o);
+        o = redisTemplate.opsForHash().get("zmgM1ap", "zmg");
+        System.out.println(o);
+        redisTemplate.delete("zmgMap");
     }
 }

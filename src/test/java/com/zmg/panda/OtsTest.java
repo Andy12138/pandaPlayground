@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -160,8 +161,37 @@ public class OtsTest {
 
     @Test
     public void dataTest() {
+        String a = "哈哈";
+        System.out.println(a.contains("哈3"));
+    }
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年mm月dd日");
-        System.out.println(simpleDateFormat.format(new Date()));
+    @Test
+    public void compareDate() {
+        String[] dateArray = {"2020-04-05 00:00:01", "2020-04-06 00:00:01", "2020-03-05 00:00:01", "2020-04-05 01:00:01"};
+        for (int i = 0; i < dateArray.length-1; i++) {
+            for (int j = 0; j < dateArray.length-1-i; j++) {
+                try {
+                    if (!compareDate(dateArray[j], dateArray[j+1])) {
+                        String tmp = dateArray[j];
+                        dateArray[j] = dateArray[j+1];
+                        dateArray[j+1] = tmp;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println(Arrays.toString(dateArray));
+    }
+
+    private boolean compareDate(String s1, String s2) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date1 = sdf.parse(s1);
+        Date date2 = sdf.parse(s2);
+        if (date1.compareTo(date2) > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

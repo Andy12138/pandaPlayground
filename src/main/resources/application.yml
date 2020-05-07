@@ -3,8 +3,9 @@ server:
 
 spring:
   redis:
-    host: 127.0.0.1
+    host: 192.168.3.18
     port: 6379
+    password: sfb123456
 
 # token认证
 app.auth:
