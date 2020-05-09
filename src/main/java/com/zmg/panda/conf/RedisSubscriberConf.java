@@ -9,6 +9,8 @@ import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 
+import java.util.Arrays;
+
 /**
  * @author Andy
  */
@@ -33,7 +35,8 @@ public class RedisSubscriberConf {
     public RedisMessageListenerContainer getRedisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory, MessageListenerAdapter listenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(redisConnectionFactory);
-        container.addMessageListener(listenerAdapter, new PatternTopic(RedisPojo.TOPIC_TITLE));
+        container.addMessageListener(listenerAdapter, Arrays.asList(new PatternTopic(RedisPojo.TOPIC_TITLE),
+                new PatternTopic(RedisPojo.TOPIC_TITLE2)));
         return container;
     }
 }

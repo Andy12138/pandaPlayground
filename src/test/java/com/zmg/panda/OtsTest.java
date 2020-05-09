@@ -1,10 +1,12 @@
 package com.zmg.panda;
 
+import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
+import lombok.Value;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -19,9 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
 
 public class OtsTest {
@@ -161,8 +161,23 @@ public class OtsTest {
 
     @Test
     public void dataTest() {
-        String a = "哈哈";
-        System.out.println(a.contains("哈3"));
+        @Data
+        class AA {
+            private String a;
+        }
+        List<Object> list = new ArrayList<>();
+        AA aa = new AA();
+        aa.setA("a");
+        list.add(aa);
+        aa.setA("b");
+        list.add(aa);
+        System.out.println(list);
+        Map<String, String> map = new HashMap<>();
+        map.put("a", "a");
+        list.add(map);
+        map.put("a", "b");
+        list.add(map);
+        System.out.println(list);
     }
 
     @Test

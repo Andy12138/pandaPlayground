@@ -6,6 +6,7 @@ import com.zmg.panda.common.bean.WsMessage;
 import com.zmg.panda.common.constants.RedisPojo;
 import com.zmg.panda.conf.EnvConf;
 import com.zmg.panda.service.IRedisReceiverService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * @author Andy
  */
+@Slf4j
 @Service
 public class RedisReceiverServiceImpl implements IRedisReceiverService {
 
@@ -27,7 +29,8 @@ public class RedisReceiverServiceImpl implements IRedisReceiverService {
     private EnvConf envConf;
 
     @Override
-    public <T> void receiveMessage(String message) {
+    public <T> void receiveMessage(String message, String channel) {
+        log.info("当前频道：{}, 接收到消息：{}", channel, message);
         WsMessage wsMessage = JSONObject.parseObject(message, WsMessage.class);
         String toUser = wsMessage.getToUser();
         Long onlineNum = redisTemplate.opsForList().size(RedisPojo.ONLINE_USERS);
