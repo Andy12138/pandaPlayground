@@ -1,5 +1,6 @@
 package com.zmg.panda.controller.websocket;
 
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpSession;
 public class WebSocketController {
 
     @GetMapping(value = "/authUser")
+    @SendToUser("/userTest/callBackByZmg")
     public String toStompWebSocket(HttpSession session){
         session.setAttribute("god", "钟名桂");
         return session.getAttribute("username").toString();

@@ -2,6 +2,7 @@ package com.zmg.panda.controller;
 
 import com.zmg.panda.common.bean.ResultVO;
 import com.zmg.panda.utils.file.FileUtils;
+import io.swagger.annotations.Api;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import java.util.Map;
 /**
  * @author Andy
  */
+@Api(tags = "zmg接口")
 @RestController
 @RequestMapping("/api/zmg")
 public class ZmgController {
@@ -24,7 +26,7 @@ public class ZmgController {
         return "hello zmg";
     }
 
-    @RequestMapping("/preview1")
+    @GetMapping("/preview1")
     public void er(HttpServletResponse response){
         String filePath = "E:\\视频教学\\springboot01\\源码、资料、课件\\SpringBoot课件.pdf";
         FileUtils fileUtils = new FileUtils();
@@ -32,7 +34,7 @@ public class ZmgController {
     }
 
 
-    @RequestMapping("/helloMe")
+    @GetMapping("/helloMe")
     public ResultVO helloMe() {
         Map<String, String> map = new HashMap<>();
         map.put("name", "钟名桂");
@@ -45,7 +47,7 @@ public class ZmgController {
         return resultVO;
     }
 
-    @RequestMapping("/myHost")
+    @GetMapping("/myHost")
     public void getHost(HttpServletRequest request) {
         System.out.println("进来了");
         System.out.println("本机ip" + request.getLocalAddr());

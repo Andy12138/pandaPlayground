@@ -28,6 +28,22 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final String[] AUTH_WHIT_ELIST = {
+//            swagger
+            "/swagger-ui.html",
+            "/swagger-resources/**",
+            "/swagger-resources",
+            "/v2/api-docs",
+            "/webjars/**",
+            "/csrf",
+            "/druid/**",
+            "configuration/ui",
+            "configuration/security",
+
+            "/api/panda/**",
+            "/api/websocket/**"
+    };
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
@@ -58,7 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().csrf().disable()
                 .authorizeRequests()
                 // /api/root/** 的接口全部放行
-                .antMatchers("/api/panda/**", "/api/websocket/**").permitAll()
+                .antMatchers(AUTH_WHIT_ELIST).permitAll()
                 .anyRequest().authenticated()
                 // post类型的登录连接
                 .and().formLogin().loginProcessingUrl("/api/login")

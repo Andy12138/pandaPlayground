@@ -1,6 +1,9 @@
 package com.zmg.panda;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
@@ -8,6 +11,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.imageio.ImageIO;
@@ -16,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OtsTest {
 
@@ -208,5 +214,51 @@ public class OtsTest {
         } else {
             return false;
         }
+    }
+
+    @Test
+    public void test4() {
+        Map<String, String> map = new HashMap<>();
+        map.put("a", "b");
+        map.put("c", "d");
+        String json = JSONObject.toJSONString(map);
+        System.out.println(json);
+        // 方法一
+        Map newMap = JSONObject.parseObject(json, Map.class);
+        System.out.println(newMap.toString());
+        // 方法二
+        JsonMapper mapper = new JsonMapper();
+        try {
+            Map map1 = mapper.readValue(json, new TypeReference<Map>() {});
+            System.out.println(map1);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    public void test5() {
+        // 注意：一定要使用创建对象的格式创建数组
+        Integer[] a = new Integer[] { 6, 3, 9, 3, 2, 4, 5, 7 };
+        Integer[] b = new Integer[] { 5, 8, 6, 2, 1, 9 };
+        List _a = Arrays.asList(a);
+        List _b = Arrays.asList(b);
+        // 创建集合
+        Collection realA = new ArrayList<Integer>(_a);
+        Collection realB = new ArrayList<Integer>(_b);
+        // 求交集
+        realA.retainAll(realB);
+        System.out.println("交集结果：" + realA);
+        Set result = new HashSet();
+        // 求全集
+        result.addAll(_a);
+        result.addAll(_b);
+        System.out.println("全集结果：" + result);
+        // 求差集：结果
+        Collection aa = new ArrayList(realA);
+        Collection bb = new ArrayList(result);
+        bb.removeAll(aa);
+        System.out.println("最终结果：" + bb);
     }
 }
