@@ -261,4 +261,28 @@ public class OtsTest {
         bb.removeAll(aa);
         System.out.println("最终结果：" + bb);
     }
+
+    @Test
+    public void test6() {
+        String url = "loc:8080/ots/api/v1/sys/sysClientDict";
+        String urlmate = "api/v1/sys/sys*";
+        url = url.substring(url.indexOf("api/v1"));
+        System.out.println(url);
+        String[] split = urlmate.split("\\*");
+        System.out.println(this.validate1(split, url));
+    }
+
+    private boolean validate1(String[] array, String url) {
+        if (url.indexOf(array[0]) != 0) {
+            return false;
+        }
+        for (int i = array.length - 1; i >= 0; i--) {
+            if (url.lastIndexOf(array[i]) >= 0) {
+                url = url.substring(0, url.lastIndexOf(array[i]));
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 }
