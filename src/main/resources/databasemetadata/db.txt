@@ -1,0 +1,40 @@
+CREATE TABLE `pet_info` (
+  `id` int(11) NOT NULL COMMENT '主键',
+  `pet_type` tinyint(4) DEFAULT NULL COMMENT '宠物类型',
+  `pet_name` varchar(20) DEFAULT NULL COMMENT '姓名',
+  `pet_age` int(11) DEFAULT NULL COMMENT '年龄',
+  `pet_gender` tinyint(1) DEFAULT NULL COMMENT '性别',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `specal_name` (`pet_type`,`pet_name`) USING BTREE COMMENT '特殊名'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='宠物基本信息表';
+
+
+CREATE TABLE `user_info` (
+  `id` int(11) NOT NULL COMMENT '主键',
+  `name` varchar(20) DEFAULT NULL COMMENT '姓名',
+  `age` int(11) DEFAULT NULL COMMENT '年龄',
+  `gender` tinyint(1) DEFAULT NULL COMMENT '性别',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户基本信息表';
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `tmp_pet_view` AS select `pet_info`.`id` AS `id`,`pet_info`.`pet_type` AS `pet_type`,`pet_info`.`pet_name` AS `pet_name`,`pet_info`.`pet_age` AS `pet_age`,`pet_info`.`pet_gender` AS `pet_gender` from `pet_info`
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `empty_procedure`()
+begin
+
+end;
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_now`() RETURNS datetime
+BEGIN
+	DECLARE result datetime;
+SELECT NOW() into result;
+RETURN result;
+END;
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_now2`(name varchar(100)) RETURNS datetime
+BEGIN
+	DECLARE result datetime;
+SELECT NOW() into result;
+RETURN result;
+END

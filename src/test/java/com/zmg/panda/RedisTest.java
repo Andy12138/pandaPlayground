@@ -1,16 +1,11 @@
 package com.zmg.panda;
 
-import com.alibaba.fastjson.JSONObject;
-import com.zmg.panda.common.bean.WsMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -21,18 +16,18 @@ public class RedisTest {
 
     @Test
     public void listTest() {
-
-        redisTemplate.opsForList().rightPush("user:zmg", "77");
-        redisTemplate.opsForList().rightPush("user:zmg", "66");
-        redisTemplate.opsForList().rightPush("user:zmg", "77");
-        redisTemplate.opsForList().rightPush("user:zmg", "88");
+            redisTemplate.delete(redisTemplate.keys("user:*"));
+//        redisTemplate.opsForList().rightPush("user:zmg:1", "77");
+//        redisTemplate.opsForList().rightPush("user:zmg:1", "66");
+//        redisTemplate.opsForList().rightPush("user:zmg:1", "77");
+//        redisTemplate.opsForList().rightPush("user:zmg:2", "88");
         Long size = redisTemplate.opsForList().size("user:zmg");
-        List<String> range = redisTemplate.opsForList().range("user:zmg", 0, size - 1);
-        range.forEach(System.out::println);
-        System.out.println("---->");
-        redisTemplate.opsForList().remove("user:zmg", 0, "77");
-        range = redisTemplate.opsForList().range("user:zmg", 0, size - 1);
-        range.forEach(System.out::println);
+//        List<String> range = redisTemplate.opsForList().range("user:zmg", 0, size - 1);
+//        range.forEach(System.out::println);
+//        System.out.println("---->");
+//        redisTemplate.opsForList().remove("user:zmg", 0, "77");
+//        range = redisTemplate.opsForList().range("user:zmg", 0, size - 1);
+//        range.forEach(System.out::println);
     }
 
     @Test
