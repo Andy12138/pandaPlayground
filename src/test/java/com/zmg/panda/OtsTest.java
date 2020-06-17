@@ -9,26 +9,21 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
-import lombok.Value;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class OtsTest {
 
@@ -284,5 +279,17 @@ public class OtsTest {
             }
         }
         return true;
+    }
+
+    @Test
+    public void test7() {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        List<Integer> list2 = new ArrayList<>();
+        list2.add(2);
+        List<Integer> list3 = new ArrayList<>();
+        list.addAll(list2);
+        list.addAll(list3);
+        System.out.println(list);
     }
 }
