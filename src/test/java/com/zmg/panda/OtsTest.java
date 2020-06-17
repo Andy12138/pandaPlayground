@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.zmg.panda.common.AESUtils;
+import com.zmg.panda.common.AESUtils2;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -282,14 +285,18 @@ public class OtsTest {
     }
 
     @Test
-    public void test7() {
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-        List<Integer> list2 = new ArrayList<>();
-        list2.add(2);
-        List<Integer> list3 = new ArrayList<>();
-        list.addAll(list2);
-        list.addAll(list3);
-        System.out.println(list);
+    public void test7() throws Exception {
+        String zmg = AESUtils.encryptByAES("钟名桂");
+//        System.out.println(zmg);
+//        String s = AESUtils.decryptByAES(zmg);
+//        System.out.println(s);
+        String zmg2 = "钟名sdfsdfsf桂";
+        String encrypt = AESUtils2.encrypt(zmg2, "1234567812345678");
+        System.out.println(encrypt);
+        byte[] decrypt = AESUtils2.decrypt(encrypt, "1234567812345678");
+        System.out.println(new String(decrypt));
+
     }
+
+
 }
