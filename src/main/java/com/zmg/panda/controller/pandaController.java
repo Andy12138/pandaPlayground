@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author Andy
  */
@@ -36,7 +38,7 @@ public class pandaController {
 
     @ApiOperation("测试一下新增呗1")
     @PostMapping("/addTest1")
-    public ResultVO<OnlineUser> addTest1(@ApiParam("在线用户") @RequestBody OnlineUser onlineUser) {
+    public ResultVO<OnlineUser> addTest1(HttpServletRequest request, @ApiParam("在线用户") @RequestBody OnlineUser onlineUser) {
         System.out.println("我在执行方法鸟~" + onlineUser.toString());
         return ResultVO.success(onlineUser);
     }

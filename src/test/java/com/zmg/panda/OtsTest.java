@@ -298,5 +298,40 @@ public class OtsTest {
 
     }
 
+    private static boolean validateIP(String startIP, String endIP) {
+        // 分离出ip中的四个数字位
+        String[] startIPArray = startIP.split("\\.");
+        String[] endIPArray = endIP.split("\\.");
+        // 取得各个数字
+        long[] startIPNum = new long[4];
+        long[] endIPNum = new long[4];
+        for (int i = 0; i < 4; i++) {
+            startIPNum[i] = Long.parseLong(startIPArray[i].trim());
+            endIPNum[i] = Long.parseLong(endIPArray[i].trim());
+        }
+        // 各个数字乘以相应的数量级
+        long startIPNumTotal = startIPNum[0] * 256 * 256 * 256 + startIPNum[1] * 256 * 256 + startIPNum[2] * 256
+            + startIPNum[3];
+        long endIPNumTotal = endIPNum[0] * 256 * 256 * 256 + endIPNum[1] * 256 * 256 + endIPNum[2] * 256 + endIPNum[3];
+        return startIPNumTotal <= endIPNumTotal;
+    }
+
+    @Test
+    public void test8() {
+        String ipConf = "192.168.1.1-192.168.1.40,192.168.2.1-192.168.2.40";
+        String ip = "192.168.1.3";
+        System.out.println("handleIp:"+ip);
+        String[] ipArray = ipConf.split(",");
+        for (String ipRange : ipArray) {
+            System.out.println("****===>****");
+            String[] ipPart = ipRange.split("-");
+            System.out.println("start:"+ipPart[0]);
+            System.out.println("end:"+ipPart[1]);
+            System.out.println(validateIP(ipPart[0], ip));
+            System.out.println(validateIP(ip, ipPart[1]));
+        }
+
+    }
+
 
 }

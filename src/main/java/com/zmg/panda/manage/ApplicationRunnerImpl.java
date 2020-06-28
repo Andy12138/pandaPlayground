@@ -22,7 +22,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // redis在线用户全部清空
-        this.offlineUsers();
+        // this.offlineUsers();
     }
 
     /**

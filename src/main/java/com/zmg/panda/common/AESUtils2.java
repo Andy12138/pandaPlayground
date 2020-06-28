@@ -6,6 +6,7 @@ import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -22,7 +23,9 @@ public class AESUtils2 {
      */
     public static String encrypt(String content, String password) throws Exception {
             KeyGenerator kgen = KeyGenerator.getInstance("AES");
-            kgen.init(128, new SecureRandom(password.getBytes()));
+        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+        random.setSeed(password.getBytes());
+        kgen.init(128, random);
             SecretKey secretKey = kgen.generateKey();
             byte[] enCodeFormat = secretKey.getEncoded();
             SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
@@ -47,7 +50,9 @@ public class AESUtils2 {
         try {
             byte[] bytes = Base64Utils.decodeFromString(content);
             KeyGenerator kgen = KeyGenerator.getInstance("AES");
-            kgen.init(128, new SecureRandom(password.getBytes()));
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            random.setSeed(password.getBytes());
+            kgen.init(128, random);
             SecretKey secretKey = kgen.generateKey();
             byte[] enCodeFormat = secretKey.getEncoded();
             SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
