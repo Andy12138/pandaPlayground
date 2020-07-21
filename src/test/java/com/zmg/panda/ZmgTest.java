@@ -77,4 +77,12 @@ public class ZmgTest {
         }
         System.out.println(list.toString());
     }
+
+    @Test
+    public void test5() {
+        List<Integer> integers = Arrays.asList(1, 2, 3, 4);
+        List<Integer> integers1 = Arrays.asList(2, 2);
+        System.out.println(integers.containsAll(integers1));
+
+    }
 }
