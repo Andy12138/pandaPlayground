@@ -22,9 +22,12 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
 
@@ -330,6 +333,82 @@ public class OtsTest {
             System.out.println(validateIP(ipPart[0], ip));
             System.out.println(validateIP(ip, ipPart[1]));
         }
+
+    }
+
+    @Test
+    public void test9() {
+        String a = "ODER BY a,b,c";
+        String b = "d";
+        int index = a.toLowerCase().indexOf("desc") > 0 ? a.toLowerCase().indexOf("desc") : a.toLowerCase().indexOf("asc");
+        if (0 > index) {
+            index = a.length();
+        }
+        System.out.println(a.substring(0, index) + ", " + b + " " + a.substring(index));
+    }
+
+    private void handleArray(int[] array) {
+        array[0] = 4;
+    }
+
+    @Test
+    public void test10() {
+        String a = null;
+        System.out.println(String.valueOf(a));
+        int[] arr = new int[]{1,2,3,4,0};
+        int tmp=0;
+        for(int i= 0;i<arr.length-1;i++) {//冒泡次数
+            for(int j=0;j<arr.length-1-i;j++) {//比较的次数
+                if(arr[j]>arr[j+1]) {//加入前面的元素小于后面的元素 调换位置
+                    tmp=arr[j];
+                    arr[j]=arr[j+1];
+                    arr[j+1]=tmp;
+                }
+            }
+        }
+        for (int i : arr) {
+            System.out.println(i);
+        }
+        Integer[] arr2 = new Integer[]{1,2,3,4,0};
+        List<Integer> integers1 = Arrays.asList(arr2);
+        List<Integer> integers = Arrays.asList(1, 2, 3, 4, 5, 2);
+        integers.sort(Comparator.comparingInt(i -> i));
+        System.out.println(integers);
+    }
+
+    @Test
+    public void test11() {
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println(now);
+        System.out.println(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        String json = "{\"d\":\"b\"}";
+        System.out.println(json.charAt(0));
+        System.out.println(json.substring(1));
+        String date = "2020-07-27";
+        String[] split = date.split("-");
+        Calendar calendar = Calendar.getInstance();
+        System.out.println(calendar.get(Calendar.YEAR));
+        System.out.println(calendar.get(Calendar.MONTH));
+        System.out.println(calendar.get(Calendar.DAY_OF_MONTH));
+        System.out.println(Integer.parseInt(split[0]) == calendar.get(Calendar.YEAR));
+        System.out.println(Integer.parseInt(split[1]) == calendar.get(Calendar.MONTH) + 1);
+        System.out.println(Integer.parseInt(split[2]) == calendar.get(Calendar.DAY_OF_MONTH));
+    }
+
+    @Data
+    public static class HHFF{
+        private String d;
+    }
+
+    private void handleList(List<String> strings) {
+        strings.removeIf("1"::equals);
+        Integer[] arr2 = new Integer[]{1,2,3,4,0};
+        ddd(arr2);
+
+//        strings = new ArrayList<>(Arrays.asList("a", "b"));
+    }
+
+    private void ddd(Integer... d) {
 
     }
 

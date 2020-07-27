@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class AA {
+    public static final String BB = "哈哈";
     private int a;
     private int b;
 }

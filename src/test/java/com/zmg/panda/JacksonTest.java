@@ -1,10 +1,13 @@
 package com.zmg.panda;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.zmg.panda.bean.AA;
+import com.zmg.panda.utils.JsonUtils;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -119,4 +122,30 @@ public class JacksonTest {
         }
     }
 
+    @Data
+    class BB{
+        @JsonProperty("name")
+        private String a;
+        @JsonProperty("Age")
+        private int age;
+    }
+
+    @Test
+    public void jsonPropertyTest() {
+        BB aa = new BB();
+        aa.setA("熊猫");
+        aa.setAge(26);
+        String json = JsonUtils.writeValueAsString(aa);
+        System.out.println(json);
+    }
+
+
+    @Test
+    public void testStatic() {
+        AA aa = new AA();
+        aa.setA(1);
+        aa.setB(2);
+        String json = JsonUtils.writeValueAsString(aa);
+        System.out.println(json);
+    }
 }
