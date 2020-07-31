@@ -395,6 +395,24 @@ public class OtsTest {
         System.out.println(Integer.parseInt(split[2]) == calendar.get(Calendar.DAY_OF_MONTH));
     }
 
+    @Test
+    public void test12() throws ParseException {
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        /*天数差*/
+        Date fromDate1 = simpleFormat.parse("2008-02-01 12:23");
+        Date toDate1 = simpleFormat.parse("2008-3-1 12:23");
+        long from1 = fromDate1.getTime();
+        long to1 = toDate1.getTime();
+        int days = (int) ((to1 - from1) / (1000 * 60 * 60 * 24));
+        System.out.println("两个时间之间的天数差为：" + days);
+        System.out.println(Calendar.getInstance().get(Calendar.MONTH));
+        Calendar instance = Calendar.getInstance();
+        instance.set(Calendar.DAY_OF_MONTH, 3);
+        System.out.println(simpleFormat.format(instance.getTime()));
+        instance.set(Calendar.HOUR, 5);
+        System.out.println(simpleFormat.format(instance.getTime()));
+    }
+
     @Data
     public static class HHFF{
         private String d;
