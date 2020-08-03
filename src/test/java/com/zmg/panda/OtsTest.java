@@ -1,6 +1,7 @@
 package com.zmg.panda;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -11,6 +12,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
+import org.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -413,10 +415,42 @@ public class OtsTest {
         System.out.println(simpleFormat.format(instance.getTime()));
     }
 
+    @Test
+    public void test13() throws JsonProcessingException {
+        Abc abc = new Abc();
+        abc.setDBc("哈哈");
+
+        JsonMapper mapper = new JsonMapper();
+        String json = mapper.writeValueAsString(abc);
+        System.out.println(json);
+
+        String json2 = "{\"d_bc\":\"哈哈\"}";
+        System.out.println(json2);
+        Abc abc1 = mapper.readValue(json2, Abc.class);
+        System.out.println(abc1.toString());
+    }
+
+    @Test
+    public void test14() {
+        int a = 2;
+        Integer c = a == 2 ? 1 : null;
+        System.out.println(c);
+
+        System.out.println(Math.round(2.839027*100.001)/100.0);
+    }
+
+    @Data
+    public static class Abc{
+        @JsonProperty("d_bc")
+        private String dBc;
+    }
+
     @Data
     public static class HHFF{
         private String d;
     }
+
+
 
     private void handleList(List<String> strings) {
         strings.removeIf("1"::equals);
@@ -428,6 +462,15 @@ public class OtsTest {
 
     private void ddd(Integer... d) {
 
+    }
+
+    public static Map<String, Object> parseJSON2Map(JSONObject json) {
+        Map<String, Object> map = new HashMap<>();
+        // 最外层解析
+        for (Object k : json.keySet()) {
+            Object v = json.get(k);
+        }
+        return map;
     }
 
 
