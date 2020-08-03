@@ -1,0 +1,165 @@
+package com.zmg.panda;
+
+import com.zmg.panda.utils.pdfbox.PdfBoxUtils;
+import com.zmg.panda.utils.pdfbox.table.*;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.junit.jupiter.api.Test;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+public class PdfBoxUtilsTest {
+
+    private PDRectangle pageSize = PDRectangle.A4;
+
+    private Integer marginX = 50;
+    private Integer marginY = 50;
+
+    @Test
+    public void test1() throws IOException {
+        PDDocument document = new PDDocument();
+        PDType0Font font = PDType0Font.load(document, new FileInputStream(new File("d:\\tmp\\arialuni.ttf")));
+        drawFirstPage(document, font);
+        drawSecondPage(document, font);
+        document.save(new FileOutputStream(new File("d:\\tmp\\test2.pdf")));
+        document.close();
+    }
+
+    private void drawFirstPage(PDDocument document, PDType0Font font) throws IOException {
+        PDPage pdPage = new PDPage(pageSize);
+        document.addPage(pdPage);
+        PDPageContentStream contentStream = new PDPageContentStream(document, pdPage);
+
+        PdfBoxUtils.beginTextSteam(contentStream, 20f, marginX.floatValue(), pageSize.getHeight()-(2*marginY));
+        // 书写信息
+        PdfBoxUtils.drawParagraph(contentStream, "结算单摘要", font, 18);
+        PdfBoxUtils.createEmptyParagraph(contentStream, 2);
+
+        contentStream.setFont(font, 13);
+        PdfBoxUtils.drawParagraph(contentStream, "结算单号：\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a02022099");
+        PdfBoxUtils.drawParagraph(contentStream, "结算时间段：\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0从20200909到20200807");
+        PdfBoxUtils.drawParagraph(contentStream, "案件总数量(件)：\u00a0100000");
+        PdfBoxUtils.drawParagraph(contentStream, "案件总标的(元)：\u00a0100000000000");
+        PdfBoxUtils.drawParagraph(contentStream, "申请人名称：\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0李白");
+        PdfBoxUtils.createEmptyParagraph(contentStream, 4);
+
+        PdfBoxUtils.drawParagraph(contentStream, "公司(盖章)：");
+        PdfBoxUtils.createEmptyParagraph(contentStream, 2);
+        contentStream.showText("日期：");
+
+        PdfBoxUtils.createEmptyParagraph(contentStream, 16);
+        contentStream.newLineAtOffset(195, 0);
+        PdfBoxUtils.drawParagraph(contentStream, "钟名桂科技防伪码", font, 12);
+
+        PdfBoxUtils.endTextSteam(contentStream);
+
+        // 划线
+        PdfBoxUtils.drawLine(contentStream, marginX, 545, PDRectangle.A4.getWidth() - marginX, 545);
+        PdfBoxUtils.drawLine(contentStream, marginX, 410, PDRectangle.A4.getWidth() - marginX, 410);
+
+        // 贴图
+        PdfBoxUtils.drawImage(document, contentStream, new File("d:\\tmp\\条形码测试.png"),
+                (pageSize.getWidth()/2)-80, 150, 160, 160);
+
+        contentStream.close();
+    }
+
+    private void drawSecondPage(PDDocument document, PDType0Font font) throws IOException {
+        PDPage mainTablePage = new PDPage(pageSize);
+        document.addPage(mainTablePage);
+        PDPageContentStream contentStream = new PDPageContentStream(document, mainTablePage);
+
+        PdfBoxUtils.beginTextSteam(contentStream, 20f, marginX.floatValue(), pageSize.getHeight() - 2*marginY);
+        // 书写信息
+        PdfBoxUtils.drawParagraph(contentStream, "申请人案件提交明细", font, 18);
+        PdfBoxUtils.endTextSteam(contentStream);
+
+        // 开始绘制table
+        List<Column> header = initTableHeader();
+
+        List<List<String>> records = new ArrayList<>();
+        for (int i = 0; i < 300; i++) {
+            records.add(Arrays.asList( "李太白" + i, "武藏", "20202020", "998", "10000000"));
+        }
+
+        float tableHight = pageSize.getHeight() - (2 * marginY);
+
+        Table table = new TableBuilder()
+                .setCellMargin(4)
+                .setRowHeight(20)
+                .setColumns(header)
+                .setContent(records)
+                .setHeight(tableHight)
+                .setMargin(marginX)
+                .setPageSize(pageSize)
+                .setTextFont(font)
+                .setFontSize(13)
+                .build();
+
+        // 每页最多显示的条数
+        Integer rowsPerPage = table.getRowsPerPage();
+        // 首页
+        Integer dataNum = 30;
+        FirstTablePage firstTablePage = new FirstTablePage();
+        firstTablePage.setDataNum(dataNum);
+        firstTablePage.setMargin(100f);
+        firstTablePage.setContentStream(contentStream);
+
+
+        int size = records.size();
+        if (size > dataNum) {
+            int firstBatch = rowsPerPage + dataNum;
+            List<List<String>> firstRecords = new ArrayList<>(firstBatch);
+            Iterator<List<String>> iterator = records.iterator();
+            int index = 0;
+            while (iterator.hasNext()) {
+                List<String> record = iterator.next();
+                firstRecords.add(record);
+                iterator.remove();
+                index ++;
+                if (index >= firstBatch) {
+                    break;
+                }
+            }
+            table.setRecords(firstRecords);
+            new PdfTableGenerator().drawTableCustom(document, firstTablePage, table);
+            // 剩下的
+            int batchNum = rowsPerPage * 2;
+            List<List<String>> batchRecords = new ArrayList<>(batchNum);
+            iterator = records.iterator();
+            index = 0;
+            while (iterator.hasNext()) {
+                List<String> record = iterator.next();
+                batchRecords.add(record);
+                iterator.remove();
+                index ++;
+                if (index % batchNum == 0) {
+                    table.setRecords(batchRecords);
+                    new PdfTableGenerator().drawTableCustom(document, null, table);
+                    batchRecords = new ArrayList<>(batchNum);
+                }
+            }
+            table.setRecords(batchRecords);
+            new PdfTableGenerator().drawTableCustom(document, null, table);
+        } else {
+            new PdfTableGenerator().drawTableCustom(document, firstTablePage, table);
+        }
+    }
+
+    private List<Column> initTableHeader() {
+        List<Column> header = new ArrayList<Column>();
+        header.add(new Column("申请人名称", 100));
+        header.add(new Column("提交人", 100));
+        header.add(new Column("提交时间", 100));
+        header.add(new Column("收案号", 100));
+        header.add(new Column("案件标的(元)", 100));
+        return header;
+    }
+}

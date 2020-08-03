@@ -1,15 +1,12 @@
 package com.zmg.panda;
 
-import com.itextpdf.text.Paragraph;
 import com.zmg.panda.utils.pdfbox.table.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImage;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.apache.pdfbox.pdmodel.graphics.image.PDInlineImage;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -82,7 +79,7 @@ public class PdfBoxTest {
         contentStream.close();
         document.addPage(pdPage);
         writeSecondPage();
-        document.save(new FileOutputStream(new File("d:\\tmp\\pdfboxTest.pdf")));
+        document.save(new FileOutputStream(new File("d:\\tmp\\test2.pdf")));
         document.close();
     }
 
@@ -111,7 +108,7 @@ public class PdfBoxTest {
         header.add(new Column("案件标的(元)", 100));
 
         List<List<String>> records = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 20; i++) {
             records.add(Arrays.asList( "李太白" + i, "武藏", "20202020", "998", "10000000"));
         }
 
@@ -135,7 +132,7 @@ public class PdfBoxTest {
         firstTablePage.setMargin(100f);
         firstTablePage.setFirstPdPage(mainTablePage);
         firstTablePage.setContentStream(contentStream);
-        new PDFTableGenerator().drawTableCustom(document, firstTablePage, table);
+        new PdfTableGenerator().drawTableCustom(document, firstTablePage, table);
 
     }
 }

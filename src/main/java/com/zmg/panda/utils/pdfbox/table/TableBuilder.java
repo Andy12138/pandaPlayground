@@ -5,6 +5,9 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 
 import java.util.List;
 
+/**
+ * @author Panda
+ */
 public class TableBuilder {
     private Table table = new Table();
 
@@ -24,14 +27,14 @@ public class TableBuilder {
     }
 
     public TableBuilder setContent(List<List<String>> content) {
-        table.setContent(content);
+        table.setRecords(content);
         return this;
     }
 
 
 
     public TableBuilder setColumns(List<Column> columns) {
-        table.setColumns(columns);
+        table.setHeader(columns);
         return this;
     }
 

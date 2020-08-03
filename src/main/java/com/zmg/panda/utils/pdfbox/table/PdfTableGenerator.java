@@ -1,20 +1,19 @@
 package com.zmg.panda.utils.pdfbox.table;
 
+import com.zmg.panda.utils.pdfbox.PdfBoxUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.util.Matrix;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author Andy
  */
-public class PDFTableGenerator {
+public class PdfTableGenerator {
 
     /**
      * Generates document from Table object
@@ -29,40 +28,42 @@ public class PDFTableGenerator {
     public void drawTableCustom(PDDocument doc, FirstTablePage firstTablePage, Table table) throws IOException {
         // 处理第一页是和业务相关，非独立的
         if (firstTablePage != null) {
-            Integer dataNum = firstTablePage.getDataNum();
-            PDPage firstPdPage = firstTablePage.getFirstPdPage();
-            PDPageContentStream contentStream = firstTablePage.getContentStream();
-            contentStream.setFont(table.getTextFont(), table.getFontSize());
-            List<List<String>> content = table.getContent();
-            dataNum = dataNum > content.size() ? content.size() : dataNum;
-            List<List<String>> firstPageContent = new ArrayList<>(dataNum);
-            Iterator<List<String>> iterator = content.iterator();
-            int index = 0;
-            while (iterator.hasNext()) {
-                List<String> next = iterator.next();
-                firstPageContent.add(next);
-                iterator.remove();
-                index ++;
-                if (index >= dataNum) {
-                    break;
-                }
-            }
-            table.setContent(content);
-            drawFirstCurrentPage(table, firstPageContent, contentStream, firstTablePage.getMargin());
+            handleMainPage(firstTablePage, table);
         }
-
         // 每页的行数
-        int rowsPerPage = new Double(Math.floor(table.getHeight() / table.getRowHeight())).intValue() - 1;
+        int rowsPerPage = table.getRowsPerPage();
         // 计算需要多少页
         int numberOfPages = new Double(Math.ceil(table.getNumberOfRows().floatValue() / rowsPerPage)).intValue();
-
         // 剩下的的页
-        for (int pageCount = 0; pageCount < numberOfPages; pageCount++) {
-            PDPage page = generatePage(doc, table);
-            PDPageContentStream contentStream = generateContentStream(doc, page, table);
-            List<List<String>> currentPageContent = getContentForCurrentPage(table, rowsPerPage, pageCount);
-            drawCurrentPage(table, currentPageContent, contentStream);
+        generateEachPage(doc, table, rowsPerPage, numberOfPages);
+    }
+
+    /**
+     * 处理pdf拥有table的第一页
+     * @param firstTablePage
+     * @param table
+     * @throws IOException
+     */
+    private void handleMainPage(FirstTablePage firstTablePage, Table table) throws IOException {
+        Integer dataNum = firstTablePage.getDataNum();
+        PDPageContentStream contentStream = firstTablePage.getContentStream();
+        contentStream.setFont(table.getTextFont(), table.getFontSize());
+        List<List<String>> content = table.getRecords();
+        dataNum = dataNum > content.size() ? content.size() : dataNum;
+        List<List<String>> firstPageContent = new ArrayList<>(dataNum);
+        Iterator<List<String>> iterator = content.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            List<String> next = iterator.next();
+            firstPageContent.add(next);
+            iterator.remove();
+            index ++;
+            if (index >= dataNum) {
+                break;
+            }
         }
+        table.setRecords(content);
+        drawFirstCurrentPage(table, firstPageContent, contentStream, firstTablePage.getMargin());
     }
 
     /**
@@ -74,11 +75,16 @@ public class PDFTableGenerator {
     public void drawTable(PDDocument doc, Table table) throws IOException {
         // Calculate pagination
         // 每页的行数
-        Integer rowsPerPage = new Double(Math.floor(table.getHeight() / table.getRowHeight())).intValue() - 1;
+        Integer rowsPerPage = table.getRowsPerPage();
         // 计算需要多少页
         int numberOfPages = new Double(Math.ceil(table.getNumberOfRows().floatValue() / rowsPerPage)).intValue();
 
         // Generate each page, get the content and draw it
+        generateEachPage(doc, table, rowsPerPage, numberOfPages);
+    }
+
+
+    private void generateEachPage(PDDocument doc, Table table, Integer rowsPerPage, int numberOfPages) throws IOException {
         for (int pageCount = 0; pageCount < numberOfPages; pageCount++) {
             PDPage page = generatePage(doc, table);
             PDPageContentStream contentStream = generateContentStream(doc, page, table);
@@ -97,7 +103,10 @@ public class PDFTableGenerator {
     private void drawCurrentPage(Table table, List<List<String>> currentPageContent, PDPageContentStream contentStream)
             throws IOException {
         float tableTopY = table.getPageSize().getHeight() - table.getMargin();
+        drawPage(table, currentPageContent, contentStream, tableTopY);
+    }
 
+    private void drawPage(Table table, List<List<String>> currentPageContent, PDPageContentStream contentStream, float tableTopY) throws IOException {
         // Draws grid and borders
         drawTableGrid(table, currentPageContent, contentStream, tableTopY);
 
@@ -134,27 +143,7 @@ public class PDFTableGenerator {
         float tableTopY = table.getPageSize().getHeight() - table.getMargin() - margin;
 
         // Draws grid and borders
-        drawTableGrid(table, currentPageContent, contentStream, tableTopY);
-
-        // Position cursor to start drawing content
-        float nextTextX = table.getMargin() + table.getCellMargin();
-        // Calculate center alignment for text in cell considering font height
-        float nextTextY = tableTopY - (table.getRowHeight() / 2)
-                - ((table.getTextFont().getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * table.getFontSize()) / 4);
-
-        // Write column headers
-        writeContentLine(table.getColumnsNamesAsArray(), contentStream, nextTextX, nextTextY, table);
-        nextTextY -= table.getRowHeight();
-        nextTextX = table.getMargin() + table.getCellMargin();
-
-        // Write content
-        for (int i = 0; i < currentPageContent.size(); i++) {
-            writeContentLine(currentPageContent.get(i), contentStream, nextTextX, nextTextY, table);
-            nextTextY -= table.getRowHeight();
-            nextTextX = table.getMargin() + table.getCellMargin();
-        }
-
-        contentStream.close();
+        drawPage(table, currentPageContent, contentStream, tableTopY);
     }
 
     /**
@@ -174,7 +163,7 @@ public class PDFTableGenerator {
             contentStream.newLineAtOffset(nextTextX, nextTextY);
             contentStream.showText(text != null ? text : "");
             contentStream.endText();
-            nextTextX += table.getColumns().get(i).getWidth();
+            nextTextX += table.getHeader().get(i).getWidth();
         }
     }
 
@@ -192,10 +181,10 @@ public class PDFTableGenerator {
         final float tableBottomY = tableTopY - tableYLength;
         float nextX = table.getMargin();
         for (int i = 0; i < table.getNumberOfColumns(); i++) {
-            contentStream.drawLine(nextX, tableTopY, nextX, tableBottomY);
-            nextX += table.getColumns().get(i).getWidth();
+            PdfBoxUtils.drawLine(contentStream, nextX, tableTopY, nextX, tableBottomY);
+            nextX += table.getHeader().get(i).getWidth();
         }
-        contentStream.drawLine(nextX, tableTopY, nextX, tableBottomY);
+        PdfBoxUtils.drawLine(contentStream, nextX, tableTopY, nextX, tableBottomY);
     }
 
     private List<List<String>> getContentForCurrentPage(Table table, Integer rowsPerPage, int pageCount) {
@@ -204,7 +193,7 @@ public class PDFTableGenerator {
         if (endRange > table.getNumberOfRows()) {
             endRange = table.getNumberOfRows();
         }
-        List<List<String>> content = table.getContent();
+        List<List<String>> content = table.getRecords();
         List<List<String>> result = new ArrayList<>(endRange - startRange);
         for (int i = startRange; i < endRange; i ++){
             result.add(content.get(i));

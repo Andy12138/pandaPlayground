@@ -50,7 +50,7 @@ public class PdfBoxUtils {
      * @param offSetY 第一行的y主表间距
      * @throws IOException
      */
-    public static void beginTextSteam(PDPageContentStream contentStream, Float leading, Integer offSetX, Integer offSetY) throws IOException {
+    public static void beginTextSteam(PDPageContentStream contentStream, Float leading, Float offSetX, Float offSetY) throws IOException {
         contentStream.beginText();
         contentStream.setLeading(leading);
         contentStream.newLineAtOffset(offSetX, offSetY);

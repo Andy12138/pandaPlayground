@@ -27,14 +27,14 @@ public class Table {
      * Content attributes
      */
     private Integer numberOfRows;
-    private List<Column> columns;
-    private List<List<String>> content;
+    private List<Column> header;
+    private List<List<String>> records;
     private float cellMargin;
 
 
     public float getWidth() {
         float tableWidth = 0f;
-        for (Column column : columns) {
+        for (Column column : header) {
             tableWidth += column.getWidth();
         }
         return tableWidth;
@@ -42,15 +42,23 @@ public class Table {
 
     public List<String> getColumnsNamesAsArray() {
         List<String> columnNames = new ArrayList<>(getNumberOfColumns());
-        columns.forEach(e -> columnNames.add(e.getName()));
+        header.forEach(e -> columnNames.add(e.getName()));
         return columnNames;
     }
 
     public Integer getNumberOfColumns() {
-        return this.getColumns().size();
+        return this.getHeader().size();
     }
 
     public Integer getNumberOfRows() {
-        return this.content.size();
+        return this.records.size();
+    }
+
+    /**
+     * 获取page显示多少行数据
+     * @return
+     */
+    public Integer getRowsPerPage() {
+        return new Double(Math.floor(this.getHeight() / this.getRowHeight())).intValue() - 1;
     }
 }
