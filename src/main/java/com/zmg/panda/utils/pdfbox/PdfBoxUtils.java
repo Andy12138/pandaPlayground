@@ -1,5 +1,7 @@
 package com.zmg.panda.utils.pdfbox;
 
+import com.openhtmltopdf.extend.FSSupplier;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -7,18 +9,21 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.KeyStore;
 
 public class PdfBoxUtils {
 
     /**
      * 插入一张图片
      * @param document
-     * @param contentStream
-     * @param imgFile
-     * @param xStart
-     * @param yStart
-     * @param width
-     * @param hight
+     * @param contentStream 输出流
+     * @param imgFile 图片文件
+     * @param xStart x主标
+     * @param yStart y主标
+     * @param width 图片宽
+     * @param hight 图片高
      * @throws IOException
      */
     public static void drawImage(PDDocument document, PDPageContentStream contentStream, File imgFile, float xStart, float yStart, float width, float hight) throws IOException {
@@ -51,8 +56,11 @@ public class PdfBoxUtils {
      * @throws IOException
      */
     public static void beginTextSteam(PDPageContentStream contentStream, Float leading, Float offSetX, Float offSetY) throws IOException {
+        // 输出流开始
         contentStream.beginText();
+        // 行间距
         contentStream.setLeading(leading);
+        // 书写行定位
         contentStream.newLineAtOffset(offSetX, offSetY);
     }
 
@@ -99,5 +107,81 @@ public class PdfBoxUtils {
         contentStream.setFont(font, fontSize);
         contentStream.showText(text);
         contentStream.newLine();
+    }
+
+
+    /**
+     * 将html转为pdf文件（中文）
+     * <p>采用的是openhtmltopdf插件</p>
+     * <p>注意html中每一个标签必须要有结尾标签</p>
+     * <p>如果要解决中文乱码问题，请在<head></head>标签中加上css样式
+     * <style>
+     * 	*{
+     * 		font-family: arialuni(这里填上对应的中文字体名)
+     *        }
+     * </style></p>
+     * @param outputStream pdf文件输出流
+     * @param htmlFile html文件
+     * @param fontInputStream 字体文件输出流（自定义字体文件，解决中文乱码问题）如：simsun.tff(宋体)
+     * @param fontFamily 字体名，如：simsun(宋体)
+     * @throws IOException
+     */
+    public static void convertHtmlToPdf(OutputStream outputStream, File htmlFile, InputStream fontInputStream, String fontFamily) throws IOException {
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.useFastMode();
+        builder.useFont(setFSFont(fontInputStream), fontFamily);
+        builder.withFile(htmlFile);
+        builder.toStream(outputStream);
+        builder.run();
+    }
+
+    /**
+     * 将html转为pdf文件（中文）
+     * <p>采用的是openhtmltopdf插件</p>
+     * <p>注意html中每一个标签必须要有结尾标签</p>
+     * <p>如果要解决中文乱码问题，请在<head></head>标签中加上css样式
+     * <style>
+     * 	*{
+     * 		font-family: arialuni(这里填上对应的中文字体名)
+     *        }
+     * </style></p>
+     * @param outputStream pdf文件输出流
+     * @param htmlFileStr Provides a string containing XHTML/XML to convert to PDF.
+     * @param fontInputStream 字体文件输出流（自定义字体文件，解决中文乱码问题）如：simsun.tff(宋体)
+     * @param fontFamily 字体名，如：simsun(宋体)
+     * @throws IOException
+     */
+    public static void convertHtmlToPdf(OutputStream outputStream, String htmlFileStr, InputStream fontInputStream, String fontFamily) throws IOException {
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.useFastMode();
+        builder.useFont(setFSFont(fontInputStream), fontFamily);
+        builder.withHtmlContent(htmlFileStr, null);
+        builder.toStream(outputStream);
+        builder.run();
+    }
+
+    /**
+     * 将html转为pdf文件
+     * <p>采用的是openhtmltopdf插件</p>
+     * <p>注意html中每一个标签必须要有结尾标签</p>
+     * @param outputStream pdf文件输出流
+     * @param htmlFile html文件
+     * @throws IOException
+     */
+    public static void convertHtmlToPdf(OutputStream outputStream, File htmlFile) throws IOException {
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.useFastMode();
+        builder.withFile(htmlFile);
+        builder.toStream(outputStream);
+        builder.run();
+    }
+
+    /**
+     * 返回自定义字体
+     * @param fontInputStream
+     * @return
+     */
+    private static FSSupplier<InputStream> setFSFont(InputStream fontInputStream) {
+        return () -> fontInputStream;
     }
 }

@@ -16,15 +16,28 @@ import java.util.List;
 public class PdfTableGenerator {
 
     /**
-     * Generates document from Table object
+     * 生成table，无main业务首页
      * @param document
      * @param table
      * @throws IOException
      */
     public void generatePDF(PDDocument document, Table table) throws IOException{
-        drawTable(document, table);
+        // 每页的行数
+        Integer rowsPerPage = table.getRowsPerPage();
+        // 计算需要多少页
+        int numberOfPages = new Double(Math.ceil(table.getNumberOfRows().floatValue() / rowsPerPage)).intValue();
+
+        // 生成每一页
+        generateEachPage(document, table, rowsPerPage, numberOfPages);
     }
 
+    /**
+     * 生成table，含main业务首页
+     * @param doc
+     * @param firstTablePage main业务首页
+     * @param table
+     * @throws IOException
+     */
     public void drawTableCustom(PDDocument doc, FirstTablePage firstTablePage, Table table) throws IOException {
         // 处理第一页是和业务相关，非独立的
         if (firstTablePage != null) {
@@ -67,23 +80,13 @@ public class PdfTableGenerator {
     }
 
     /**
-     * Configures basic setup for the table and draws it page by page
+     * 遍历自动生成page
      * @param doc
      * @param table
+     * @param rowsPerPage
+     * @param numberOfPages
      * @throws IOException
      */
-    public void drawTable(PDDocument doc, Table table) throws IOException {
-        // Calculate pagination
-        // 每页的行数
-        Integer rowsPerPage = table.getRowsPerPage();
-        // 计算需要多少页
-        int numberOfPages = new Double(Math.ceil(table.getNumberOfRows().floatValue() / rowsPerPage)).intValue();
-
-        // Generate each page, get the content and draw it
-        generateEachPage(doc, table, rowsPerPage, numberOfPages);
-    }
-
-
     private void generateEachPage(PDDocument doc, Table table, Integer rowsPerPage, int numberOfPages) throws IOException {
         for (int pageCount = 0; pageCount < numberOfPages; pageCount++) {
             PDPage page = generatePage(doc, table);
@@ -94,7 +97,7 @@ public class PdfTableGenerator {
     }
 
     /**
-     * Draws current page table grid and border lines and content
+     * 写页面
      * @param table
      * @param currentPageContent
      * @param contentStream
@@ -106,22 +109,30 @@ public class PdfTableGenerator {
         drawPage(table, currentPageContent, contentStream, tableTopY);
     }
 
+    /**
+     * 在页面中写入table
+     * @param table
+     * @param currentPageContent
+     * @param contentStream
+     * @param tableTopY
+     * @throws IOException
+     */
     private void drawPage(Table table, List<List<String>> currentPageContent, PDPageContentStream contentStream, float tableTopY) throws IOException {
-        // Draws grid and borders
+        // 给table画网格
         drawTableGrid(table, currentPageContent, contentStream, tableTopY);
 
-        // Position cursor to start drawing content
+        // 游标开始点
         float nextTextX = table.getMargin() + table.getCellMargin();
-        // Calculate center alignment for text in cell considering font height
+        // 考虑字体高度计算单元格中文本的中心对齐方式
         float nextTextY = tableTopY - (table.getRowHeight() / 2)
                 - ((table.getTextFont().getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * table.getFontSize()) / 4);
 
-        // Write column headers
+        // 写入table的表头
         writeContentLine(table.getColumnsNamesAsArray(), contentStream, nextTextX, nextTextY, table);
         nextTextY -= table.getRowHeight();
         nextTextX = table.getMargin() + table.getCellMargin();
 
-        // Write content
+        // 写入表数据
         for (int i = 0; i < currentPageContent.size(); i++) {
             writeContentLine(currentPageContent.get(i), contentStream, nextTextX, nextTextY, table);
             nextTextY -= table.getRowHeight();
@@ -132,7 +143,7 @@ public class PdfTableGenerator {
     }
 
     /**
-     * Draws current page table grid and border lines and content
+     * 写入含有业务的第一页数据
      * @param table
      * @param currentPageContent
      * @param contentStream
@@ -142,12 +153,12 @@ public class PdfTableGenerator {
             throws IOException {
         float tableTopY = table.getPageSize().getHeight() - table.getMargin() - margin;
 
-        // Draws grid and borders
+        // 在页面中写入table
         drawPage(table, currentPageContent, contentStream, tableTopY);
     }
 
     /**
-     * Writes the content for one line
+     * 为table每一行写入数据
      * @param lineContent
      * @param contentStream
      * @param nextTextX
@@ -167,16 +178,24 @@ public class PdfTableGenerator {
         }
     }
 
+    /**
+     * 画页面中的table网格
+     * @param table
+     * @param currentPageContent
+     * @param contentStream
+     * @param tableTopY
+     * @throws IOException
+     */
     private void drawTableGrid(Table table, List<List<String>> currentPageContent, PDPageContentStream contentStream, float tableTopY)
             throws IOException {
-        // Draw row lines
+        // 画行线
         float nextY = tableTopY;
         for (int i = 0; i <= currentPageContent.size() + 1; i++) {
-            contentStream.drawLine(table.getMargin(), nextY, table.getMargin() + table.getWidth(), nextY);
+            PdfBoxUtils.drawLine(contentStream, table.getMargin(), nextY, table.getMargin() + table.getWidth(), nextY);
             nextY -= table.getRowHeight();
         }
 
-        // Draw column lines
+        // 画列线
         final float tableYLength = table.getRowHeight() + (table.getRowHeight() * currentPageContent.size());
         final float tableBottomY = tableTopY - tableYLength;
         float nextX = table.getMargin();
@@ -187,6 +206,13 @@ public class PdfTableGenerator {
         PdfBoxUtils.drawLine(contentStream, nextX, tableTopY, nextX, tableBottomY);
     }
 
+    /**
+     * 获取page中需要展示的数据行
+     * @param table
+     * @param rowsPerPage
+     * @param pageCount
+     * @return
+     */
     private List<List<String>> getContentForCurrentPage(Table table, Integer rowsPerPage, int pageCount) {
         int startRange = pageCount * rowsPerPage;
         int endRange = (pageCount * rowsPerPage) + rowsPerPage;
@@ -201,16 +227,28 @@ public class PdfTableGenerator {
         return result;
     }
 
+    /**
+     * 生成page
+     * @param doc
+     * @param table
+     * @return
+     */
     private PDPage generatePage(PDDocument doc, Table table) {
         PDPage page = new PDPage(table.getPageSize());
         doc.addPage(page);
         return page;
     }
 
+    /**
+     * 生成页面画笔输出流
+     * @param doc
+     * @param page
+     * @param table
+     * @return
+     * @throws IOException
+     */
     private PDPageContentStream generateContentStream(PDDocument doc, PDPage page, Table table) throws IOException {
         PDPageContentStream contentStream = new PDPageContentStream(doc, page);
-        // User transformation matrix to change the reference when drawing.
-        // This is necessary for the landscape position to draw correctly
         contentStream.setFont(table.getTextFont(), table.getFontSize());
         return contentStream;
     }

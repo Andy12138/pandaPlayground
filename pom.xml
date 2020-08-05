@@ -166,17 +166,22 @@
             <artifactId>itext-asian</artifactId>
             <version>5.2.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-core -->
+<!--        openhtmltopdf-->
         <dependency>
             <groupId>com.openhtmltopdf</groupId>
             <artifactId>openhtmltopdf-core</artifactId>
             <version>1.0.4</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-pdfbox -->
         <dependency>
             <groupId>com.openhtmltopdf</groupId>
             <artifactId>openhtmltopdf-pdfbox</artifactId>
             <version>1.0.4</version>
+        </dependency>
+        <!-- pdfbox-app -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-app</artifactId>
+            <version>2.0.20</version>
         </dependency>
 
         <!-- pdfbox-->
@@ -205,11 +210,19 @@
 <!--            <artifactId>preflight</artifactId>-->
 <!--            <version>2.0.0</version>-->
 <!--        </dependency>-->
+
+
 <!--        <dependency>-->
 <!--            <groupId>org.apache.pdfbox</groupId>-->
 <!--            <artifactId>pdfbox-tools</artifactId>-->
 <!--            <version>2.0.0</version>-->
 <!--        </dependency>-->
+        <!-- apache.commons.io -->
+        <dependency>
+            <groupId>org.apache.directory.studio</groupId>
+            <artifactId>org.apache.commons.io</artifactId>
+            <version>2.4</version>
+        </dependency>
         <!--redis-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

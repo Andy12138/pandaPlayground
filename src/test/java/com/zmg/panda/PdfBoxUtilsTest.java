@@ -10,10 +10,12 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PdfBoxUtilsTest {
 
@@ -25,7 +27,7 @@ public class PdfBoxUtilsTest {
     @Test
     public void test1() throws IOException {
         PDDocument document = new PDDocument();
-        PDType0Font font = PDType0Font.load(document, new FileInputStream(new File("d:\\tmp\\arialuni.ttf")));
+        PDType0Font font = PDType0Font.load(document, new FileInputStream(new File("d:\\tmp\\simsun.ttf")));
         drawFirstPage(document, font);
         drawSecondPage(document, font);
         document.save(new FileOutputStream(new File("d:\\tmp\\test2.pdf")));
@@ -43,11 +45,11 @@ public class PdfBoxUtilsTest {
         PdfBoxUtils.createEmptyParagraph(contentStream, 2);
 
         contentStream.setFont(font, 13);
-        PdfBoxUtils.drawParagraph(contentStream, "结算单号：\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a02022099");
-        PdfBoxUtils.drawParagraph(contentStream, "结算时间段：\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0从20200909到20200807");
+        PdfBoxUtils.drawParagraph(contentStream, "结算单号：\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a02022099");
+        PdfBoxUtils.drawParagraph(contentStream, "结算时间段：\u00a0\u00a0\u00a0\u00a0\u00a0从20200909到20200807");
         PdfBoxUtils.drawParagraph(contentStream, "案件总数量(件)：\u00a0100000");
         PdfBoxUtils.drawParagraph(contentStream, "案件总标的(元)：\u00a0100000000000");
-        PdfBoxUtils.drawParagraph(contentStream, "申请人名称：\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0李白");
+        PdfBoxUtils.drawParagraph(contentStream, "申请人名称：\u00a0\u00a0\u00a0\u00a0\u00a0李白");
         PdfBoxUtils.createEmptyParagraph(contentStream, 4);
 
         PdfBoxUtils.drawParagraph(contentStream, "公司(盖章)：");
@@ -85,7 +87,7 @@ public class PdfBoxUtilsTest {
         List<Column> header = initTableHeader();
 
         List<List<String>> records = new ArrayList<>();
-        for (int i = 0; i < 300; i++) {
+        for (int i = 0; i < 90; i++) {
             records.add(Arrays.asList( "李太白" + i, "武藏", "20202020", "998", "10000000"));
         }
 
@@ -112,45 +114,39 @@ public class PdfBoxUtilsTest {
         firstTablePage.setMargin(100f);
         firstTablePage.setContentStream(contentStream);
 
-
-        int size = records.size();
-        if (size > dataNum) {
-            int firstBatch = rowsPerPage + dataNum;
-            List<List<String>> firstRecords = new ArrayList<>(firstBatch);
-            Iterator<List<String>> iterator = records.iterator();
-            int index = 0;
-            while (iterator.hasNext()) {
-                List<String> record = iterator.next();
-                firstRecords.add(record);
-                iterator.remove();
-                index ++;
-                if (index >= firstBatch) {
-                    break;
-                }
+        int firstBatch = rowsPerPage + dataNum;
+        List<List<String>> firstRecords = new ArrayList<>(firstBatch);
+        Iterator<List<String>> iterator = records.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            List<String> record = iterator.next();
+            firstRecords.add(record);
+            iterator.remove();
+            index ++;
+            if (index >= firstBatch) {
+                break;
             }
-            table.setRecords(firstRecords);
-            new PdfTableGenerator().drawTableCustom(document, firstTablePage, table);
-            // 剩下的
-            int batchNum = rowsPerPage * 2;
-            List<List<String>> batchRecords = new ArrayList<>(batchNum);
-            iterator = records.iterator();
-            index = 0;
-            while (iterator.hasNext()) {
-                List<String> record = iterator.next();
-                batchRecords.add(record);
-                iterator.remove();
-                index ++;
-                if (index % batchNum == 0) {
-                    table.setRecords(batchRecords);
-                    new PdfTableGenerator().drawTableCustom(document, null, table);
-                    batchRecords = new ArrayList<>(batchNum);
-                }
-            }
-            table.setRecords(batchRecords);
-            new PdfTableGenerator().drawTableCustom(document, null, table);
-        } else {
-            new PdfTableGenerator().drawTableCustom(document, firstTablePage, table);
         }
+        table.setRecords(firstRecords);
+        new PdfTableGenerator().drawTableCustom(document, firstTablePage, table);
+        // 剩下的
+        int batchNum = rowsPerPage * 2;
+        List<List<String>> batchRecords = new ArrayList<>(batchNum);
+        iterator = records.iterator();
+        index = 0;
+        while (iterator.hasNext()) {
+            List<String> record = iterator.next();
+            batchRecords.add(record);
+            iterator.remove();
+            index ++;
+            if (index % batchNum == 0) {
+                table.setRecords(batchRecords);
+                new PdfTableGenerator().drawTableCustom(document, null, table);
+                batchRecords = new ArrayList<>(batchNum);
+            }
+        }
+        table.setRecords(batchRecords);
+        new PdfTableGenerator().drawTableCustom(document, null, table);
     }
 
     private List<Column> initTableHeader() {
@@ -161,5 +157,16 @@ public class PdfBoxUtilsTest {
         header.add(new Column("收案号", 100));
         header.add(new Column("案件标的(元)", 100));
         return header;
+    }
+
+
+    @Test
+    public void test2() throws IOException {
+        File file = new File("d:\\tmp\\testhtml.html");
+        String collect = Files.readAllLines(file.toPath()).stream().collect(Collectors.joining("\n"));
+        PdfBoxUtils.convertHtmlToPdf(new FileOutputStream(new File("d:\\tmp\\html.pdf")),
+                new File("d:\\tmp\\testhtml.html"),
+                new FileInputStream(new File("d:\\tmp\\arialuni.ttf")),
+                "arialuni");
     }
 }
