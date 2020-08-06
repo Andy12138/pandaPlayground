@@ -162,8 +162,8 @@ public class PdfBoxUtilsTest {
 
     @Test
     public void test2() throws IOException {
-        File file = new File("d:\\tmp\\testhtml.html");
-        String collect = Files.readAllLines(file.toPath()).stream().collect(Collectors.joining("\n"));
+//        File file = new File("d:\\tmp\\testhtml.html");
+//        String collect = Files.readAllLines(file.toPath()).stream().collect(Collectors.joining("\n"));
         PdfBoxUtils.convertHtmlToPdf(new FileOutputStream(new File("d:\\tmp\\html.pdf")),
                 new File("d:\\tmp\\testhtml.html"),
                 new FileInputStream(new File("d:\\tmp\\arialuni.ttf")),

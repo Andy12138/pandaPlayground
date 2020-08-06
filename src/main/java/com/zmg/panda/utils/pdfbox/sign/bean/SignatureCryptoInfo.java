@@ -1,4 +1,4 @@
-package com.zmg.panda.utils.pdfbox.sign;
+package com.zmg.panda.utils.pdfbox.sign.bean;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 

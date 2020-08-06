@@ -1,4 +1,4 @@
-package com.zmg.panda.utils.pdfbox.sign;
+package com.zmg.panda.utils.pdfbox.sign.bean;
 
 public class SignatureAlgorithm {
 
