@@ -15,6 +15,8 @@ import lombok.ToString;
 import org.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.DigestUtils;
+import sun.security.provider.MD5;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -432,11 +434,27 @@ public class OtsTest {
 
     @Test
     public void test14() {
-        int a = 2;
-        Integer c = a == 2 ? 1 : null;
-        System.out.println(c);
+        Calendar calendar = Calendar.getInstance();
+        System.out.println(calendar.get(Calendar.MONTH));
+        calendar.set(Calendar.MONTH, 0);
+        calendar.add(Calendar.MONTH, 3);
+        calendar.set(Calendar.DAY_OF_MONTH, 0);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        System.out.println(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
+        System.out.println(new Random().nextInt(5));
+    }
 
-        System.out.println(Math.round(2.839027*100.001)/100.0);
+    @Test
+    public void test15() {
+        String s1 = DigestUtils.md5DigestAsHex("哈哈123".getBytes());
+        String s2 = DigestUtils.md5DigestAsHex("哈哈123".getBytes());
+        String s3 = DigestUtils.md5DigestAsHex("哈哈123 ".getBytes());
+        System.out.println(s1);
+        System.out.println(s2);
+        System.out.println(s3);
+//        DigestUtils.
     }
 
     @Data

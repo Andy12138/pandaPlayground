@@ -2,6 +2,7 @@ package com.zmg.panda.utils.pdfbox;
 
 import com.openhtmltopdf.extend.FSSupplier;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -28,6 +29,23 @@ public class PdfBoxUtils {
      */
     public static void drawImage(PDDocument document, PDPageContentStream contentStream, File imgFile, float xStart, float yStart, float width, float hight) throws IOException {
         PDImageXObject pdImage = PDImageXObject.createFromFileByContent(imgFile, document);
+        contentStream.drawImage(pdImage, xStart, yStart, width, hight );
+    }
+
+    /**
+     * 插入一张图片
+     * @param document
+     * @param contentStream 输出流
+     * @param imgFileInputStream 图片文件
+     * @param xStart x主标
+     * @param yStart y主标
+     * @param width 图片宽
+     * @param hight 图片高
+     * @throws IOException
+     */
+    public static void drawImage(PDDocument document, PDPageContentStream contentStream, InputStream imgFileInputStream, float xStart, float yStart, float width, float hight) throws IOException {
+        byte[] bytes = IOUtils.toByteArray(imgFileInputStream);
+        PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, bytes, null);
         contentStream.drawImage(pdImage, xStart, yStart, width, hight );
     }
 

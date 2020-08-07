@@ -67,7 +67,7 @@ public class PdfBoxUtilsTest {
         PdfBoxUtils.drawLine(contentStream, marginX, 410, PDRectangle.A4.getWidth() - marginX, 410);
 
         // 贴图
-        PdfBoxUtils.drawImage(document, contentStream, new File("d:\\tmp\\条形码测试.png"),
+        PdfBoxUtils.drawImage(document, contentStream, new FileInputStream(new File("d:\\tmp\\条形码测试.png")),
                 (pageSize.getWidth()/2)-80, 150, 160, 160);
 
         contentStream.close();
@@ -88,7 +88,7 @@ public class PdfBoxUtilsTest {
 
         List<List<String>> records = new ArrayList<>();
         for (int i = 0; i < 90; i++) {
-            records.add(Arrays.asList( "李太白" + i, "武藏", "20202020", "998", "10000000"));
+            records.add(Arrays.asList( "李太白" + i, "广州市分机构","20202020", "10000000"));
         }
 
         float tableHight = pageSize.getHeight() - (2 * marginY);
@@ -151,9 +151,8 @@ public class PdfBoxUtilsTest {
 
     private List<Column> initTableHeader() {
         List<Column> header = new ArrayList<Column>();
-        header.add(new Column("申请人名称", 100));
-        header.add(new Column("提交人", 100));
-        header.add(new Column("提交时间", 100));
+        header.add(new Column("申请人名称", 150));
+        header.add(new Column("机构名称", 150));
         header.add(new Column("收案号", 100));
         header.add(new Column("案件标的(元)", 100));
         return header;
