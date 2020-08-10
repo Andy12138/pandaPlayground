@@ -29,7 +29,7 @@ public class PdfBoxUtilsTest {
         PDDocument document = new PDDocument();
         PDType0Font font = PDType0Font.load(document, new FileInputStream(new File("d:\\tmp\\simsun.ttf")));
         drawFirstPage(document, font);
-        drawSecondPage(document, font);
+        // drawSecondPage(document, font);
         document.save(new FileOutputStream(new File("d:\\tmp\\test2.pdf")));
         document.close();
     }
@@ -41,7 +41,7 @@ public class PdfBoxUtilsTest {
 
         PdfBoxUtils.beginTextSteam(contentStream, 20f, marginX.floatValue(), pageSize.getHeight()-(2*marginY));
         // 书写信息
-        PdfBoxUtils.drawParagraph(contentStream, "结算单摘要", font, 18);
+        PdfBoxUtils.drawParagraph(contentStream, "物流单摘要", font, 18);
         PdfBoxUtils.createEmptyParagraph(contentStream, 2);
 
         contentStream.setFont(font, 13);
@@ -58,7 +58,7 @@ public class PdfBoxUtilsTest {
 
         PdfBoxUtils.createEmptyParagraph(contentStream, 16);
         contentStream.newLineAtOffset(195, 0);
-        PdfBoxUtils.drawParagraph(contentStream, "钟名桂科技防伪码", font, 12);
+        PdfBoxUtils.drawParagraph(contentStream, "小熊猫超级防伪码", font, 12);
 
         PdfBoxUtils.endTextSteam(contentStream);
 
@@ -80,7 +80,7 @@ public class PdfBoxUtilsTest {
 
         PdfBoxUtils.beginTextSteam(contentStream, 20f, marginX.floatValue(), pageSize.getHeight() - 2*marginY);
         // 书写信息
-        PdfBoxUtils.drawParagraph(contentStream, "申请人案件提交明细", font, 18);
+        PdfBoxUtils.drawParagraph(contentStream, "买卖人商品提交明细", font, 18);
         PdfBoxUtils.endTextSteam(contentStream);
 
         // 开始绘制table
@@ -154,7 +154,7 @@ public class PdfBoxUtilsTest {
         header.add(new Column("申请人名称", 150));
         header.add(new Column("机构名称", 150));
         header.add(new Column("收案号", 100));
-        header.add(new Column("案件标的(元)", 100));
+        header.add(new Column("商品价格(元)", 100));
         return header;
     }
 
