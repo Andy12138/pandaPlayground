@@ -18,12 +18,11 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 
+/**
+ * @author Panda
+ */
 public class CRLDistributionPointsExtractor {
-	/**
-	 * Extracts all CRL distribution point URLs from the
-	 * "CRL Distribution Point" extension in a X.509 certificate. If CRL
-	 * distribution point extension is unavailable, returns an empty list.
-	 */
+
 	public static List<String> getCrlDistributionPoints(X509Certificate cert) {
 
 		ASN1InputStream oAsnInStream = null;
@@ -44,11 +43,11 @@ public class CRLDistributionPointsExtractor {
 			List<String> crlUrls = new ArrayList<String>();
 			for (DistributionPoint dp : distPoint.getDistributionPoints()) {
 				DistributionPointName dpn = dp.getDistributionPoint();
-				// Look for URIs in fullName
+
 				if (dpn != null) {
 					if (dpn.getType() == DistributionPointName.FULL_NAME) {
 						GeneralName[] genNames = GeneralNames.getInstance(dpn.getName()).getNames();
-						// Look for an URI
+
 						for (int j = 0; j < genNames.length; j++) {
 							if (genNames[j].getTagNo() == GeneralName.uniformResourceIdentifier) {
 								String url = DERIA5String.getInstance(genNames[j].getName()).getString();

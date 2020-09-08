@@ -28,8 +28,8 @@ public class PdfBoxUtilsTest {
     public void test1() throws IOException {
         PDDocument document = new PDDocument();
         PDType0Font font = PDType0Font.load(document, new FileInputStream(new File("d:\\tmp\\simsun.ttf")));
-        drawFirstPage(document, font);
-        // drawSecondPage(document, font);
+        // drawFirstPage(document, font);
+        drawSecondPage(document, font);
         document.save(new FileOutputStream(new File("d:\\tmp\\test2.pdf")));
         document.close();
     }
@@ -151,9 +151,9 @@ public class PdfBoxUtilsTest {
 
     private List<Column> initTableHeader() {
         List<Column> header = new ArrayList<Column>();
-        header.add(new Column("申请人名称", 150));
-        header.add(new Column("机构名称", 150));
-        header.add(new Column("收案号", 100));
+        header.add(new Column("买卖人人名称", 150));
+        header.add(new Column("店铺名称", 150));
+        header.add(new Column("商品号", 100));
         header.add(new Column("商品价格(元)", 100));
         return header;
     }

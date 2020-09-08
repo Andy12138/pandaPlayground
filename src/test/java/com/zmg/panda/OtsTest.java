@@ -12,6 +12,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,13 +22,14 @@ import sun.security.provider.MD5;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -35,6 +37,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
 
+@Slf4j
 public class OtsTest {
 
     @Test
@@ -189,6 +192,12 @@ public class OtsTest {
         map.put("a", "b");
         list.add(map);
         System.out.println(list);
+        for (Object o : list) {
+            AA o1 = (AA) o;
+            o1.setA("c");
+            break;
+        }
+        System.out.println(list);
     }
 
     @Test
@@ -300,7 +309,8 @@ public class OtsTest {
         String zmg2 = "钟名sdfsdfsf桂";
         String encrypt = AESUtils2.encrypt(zmg2, "1234567812345678");
         System.out.println(encrypt);
-        byte[] decrypt = AESUtils2.decrypt(encrypt, "1234567812345678");
+        byte[] decrypt = AESUtils2.decrypt("R6ZnYOEImae0ur2JAkLAjfk3zb383MriODku1H1cfLXobWIYP5c5zC1cKZbch5wM2fDSZDZM2giQn+uaTagJtHt+dJOlj8ICRrm1WHurE2VdrcI6DtBIj5LdmaFLghy95kARLwF8ijRb+roqZFNJTrr3Cj5K7t5yC+j/ZonHX/wO2Xb+uTdJdu54GBNMF1ZgFQy27PvzypnJtUyoOkowvWEikgc7nsvKsX4WndNKqTEE+LptcqNfJlyPZF6XFrambq5usZtwhilY4eEkdlUn8ZEtF6syioQ5u2bpRAMJjHc=",
+                "ots_odrfin");
         System.out.println(new String(decrypt));
 
     }
@@ -489,6 +499,123 @@ public class OtsTest {
             Object v = json.get(k);
         }
         return map;
+    }
+
+
+    @Test
+    public void testWrite5() {
+        File binFile = new File("d:\\tmp\\二进制7.bin");
+        // 案件号 申请人 状态 标的 时间
+        int dataNum = 1;
+        RandomAccessFile rf = null;
+        try {
+            rf = new RandomAccessFile(binFile, "rw");
+            long length = rf.length();
+            // 指针移动到末尾处
+            rf.seek(length);
+            // 写入数据
+            log.info("开始写入数据");
+            for (int i = 0; i < dataNum; i++) {
+                List<Object> list = new ArrayList<>(Arrays.asList(1 + i, 23, 10, 10000, "2020-08-19 12:12:12"));
+                byte b0 = ((Integer) list.get(0)).byteValue();
+                byte b1 = ((Integer) list.get(1)).byteValue();
+                byte b2 = ((Integer) list.get(2)).byteValue();
+                // byte b3 = ((Long) list.get(3)).byteValue();
+                byte[] bytes = ((String) list.get(4)).getBytes();
+                List<Byte> ist = new ArrayList<>();
+                ist.add(b0);
+                ist.add(b1);
+                ist.add(b2);
+                for (byte aByte : bytes) {
+                    ist.add(aByte);
+                }
+                byte[] bytes1 = new byte[ist.size()];
+                for (int i1 = 0; i1 < ist.size(); i1++) {
+                    bytes1[i1] = ist.get(i1);
+                }
+                rf.write(bytes1);
+//                rf.write(bytes);
+//                rf.writeInt((Integer) list.get(0));
+//                rf.writeInt((Integer) list.get(1));
+//                rf.writeInt((Integer) list.get(2));
+//                rf.writeLong(Long.parseLong(list.get(3).toString()));
+//                rf.writeUTF((String) list.get(4));
+                log.info("写入第[{}]条数据", i + 1);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeIO(rf);
+        }
+    }
+
+    @Test
+    public void readTest5() {
+        File binFile = new File("d:\\tmp\\二进制7.bin");
+        int dataNum = 10000 * 200;
+        RandomAccessFile rf = null;
+        try {
+            rf = new RandomAccessFile(binFile, "r");
+            log.info("开始读入数据");
+            log.info("指针位置:{}", rf.getFilePointer());
+            for (int i = 0; i < dataNum; i++) {
+                // 案件号 申请人 状态 标的 时间
+                List<Object> list = new ArrayList<>();
+                list.add(rf.readInt());
+                list.add(rf.readInt());
+                list.add(rf.readInt());
+                list.add(rf.readLong());
+//                list.add(rf.readLine());
+
+//                list.add(rf.readUTF());
+                log.info("第[{}]条数据, 数据为：{}", i + 1, list.toString());
+                log.info("指针位置:{}", rf.getFilePointer());
+                if (i == 10) {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeIO(rf);
+        }
+    }
+
+    private void closeIO(RandomAccessFile rf) {
+        try {
+            if (rf != null) {
+                rf.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void test16() {
+        File file = new File("d:\\二进制.bin");
+        try {
+            RandomAccessFile rw = new RandomAccessFile(file, "rw");
+            rw.writeUTF("名1桂");
+            rw.close();
+            boolean b = file.renameTo(new File("d:\\tmp\\二进制1.bin"));
+            System.out.println(b);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void test17() {
+        try {
+            Files.copy(new File("D:\\tmp\\excelTest2.xlsx").toPath(), new FileOutputStream(new File("D:\\tmp\\excelTest.xlsx")));
+            // Files.deleteIfExists(new File("D:\\tmp\\excelTest.xlsx").toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
